@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Word Teacher</string>
+    <string name="Start">Start</string>
+    <string name="dictionary_name">Dictionary name</string>
+    <string name="word">Word</string>
+    <string name="meaning">meaning of the word</string>
+    <string name="not_fields_filled">Not all fields are filled</string>
+    <string name="name_is_empty">Dictionary name is empty</string>
+</resources>
