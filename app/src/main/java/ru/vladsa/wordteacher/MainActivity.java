@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -21,9 +22,6 @@ import ru.vladsa.wordteacher.dictionaries.words.WordRepository;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final WordRepository wordRepository = WordRepository.getInstance(this);
-    private final DictionaryRepository dictionaryRepository = DictionaryRepository.getInstance(this);
-
     private ActivityMainBinding binding;
 
     @Override
@@ -32,12 +30,17 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
         binding.container.setAdapter(adapter);
 
         binding.start.setOnClickListener(view -> start());
         binding.addDictionary.setOnClickListener(view -> addDictionary());
 
     }
+
+    private final WordRepository wordRepository = WordRepository.getInstance(this);
+    private final DictionaryRepository dictionaryRepository = DictionaryRepository.getInstance(this);
+
 
     DictionaryAdapter.OnDictionaryClickListener clickListener = new DictionaryAdapter.OnDictionaryClickListener() {
 
@@ -46,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, DictionaryEditActivity.class);
             intent.putExtra(DictionaryEditActivity.DICTIONARY_ID, holder.getAdapterPosition());
 
-            activityDictionaryEditLauncher.launch(intent);
+//            activityDictionaryEditLauncher.launch(intent);
 
         }
     };
@@ -59,14 +62,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, DictionaryEditActivity.class);
         intent.putExtra(DictionaryEditActivity.DICTIONARY_ID, -1);
 
-        activityDictionaryEditLauncher.launch(intent);
+//        activityDictionaryEditLauncher.launch(intent);
     }
 
     private void start() {
-        Intent intent = new Intent(MainActivity.this, LearningActivity.class);
-        //TODO: dictionaries transfer
-
-        startActivity(intent);
+        //TODO: Start learning
     }
 
     private final ActivityResultLauncher<Intent> activityDictionaryEditLauncher = registerForActivityResult(
