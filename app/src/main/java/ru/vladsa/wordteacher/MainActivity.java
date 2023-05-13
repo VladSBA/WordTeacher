@@ -22,6 +22,7 @@ import ru.vladsa.wordteacher.dictionaries.words.WordRepository;
 
 public class MainActivity extends AppCompatActivity {
 
+
     private ActivityMainBinding binding;
 
     @Override
