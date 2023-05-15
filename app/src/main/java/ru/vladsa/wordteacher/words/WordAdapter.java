@@ -14,7 +14,7 @@ import ru.vladsa.wordteacher.databinding.ItemWordBinding;
 
 public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
-    List<WordData> words = new ArrayList<>();
+    List<WordData> words = new ArrayList<WordData>();
 
     public interface OnWordDataClickListener {
         void onWordClick(ViewHolder holder);
@@ -22,8 +22,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
     private final WordAdapter.OnWordDataClickListener clickListener;
 
-    public WordAdapter(WordAdapter.OnWordDataClickListener clickListener) {
+    public WordAdapter(WordAdapter.OnWordDataClickListener clickListener, List<WordData> words) {
         this.clickListener = clickListener;
+        this.words = words;
     }
 
     @NonNull

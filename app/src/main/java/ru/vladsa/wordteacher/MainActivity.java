@@ -40,8 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         binding.container.setAdapter(adapter);
 
-
-        adapter.setData(data);
+        adapter.setData(dictionaryRepository.getDictionaries());
 
     }
 

@@ -58,7 +58,6 @@ public class DictionaryAdapter extends RecyclerView.Adapter<DictionaryAdapter.Vi
 
     @Override
     public int getItemCount() {
-        // return filterData.size();
         return data.size();
     }
 

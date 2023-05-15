@@ -33,21 +33,20 @@ public class DictionaryEditActivity extends AppCompatActivity {
         binding = ActivityDictionaryEditBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        dictionaryID = getIntent().getIntExtra(DICTIONARY_ID, -1);
-
-        binding.container.setAdapter(adapter);
-
         binding.add.setOnClickListener(view -> addWord());
         binding.confirm.setOnClickListener(view -> confirm());
 
+        dictionaryID = getIntent().getIntExtra(DICTIONARY_ID, -1);
 
         if (words.isEmpty()) {
-            words.add(new WordData("Example", "Example2", null, -1));
+            words.add(new WordData("Example", "Example2", null, dictionaryID));
+
+            adapter.setWords(words);
         }
 
-        adapter.setWords(words);
+        binding.container.setAdapter(adapter);
 
-
+        //TODO: Fix adapter
 
     }
 
@@ -59,7 +58,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
     };
 
 
-    private final WordAdapter adapter = new WordAdapter(clickListener);
+    private final WordAdapter adapter = new WordAdapter(clickListener, words);
 
 
     private void confirm() {

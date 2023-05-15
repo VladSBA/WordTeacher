@@ -22,9 +22,12 @@ public class DictionaryRepository {
 
     public DictionaryRepository(Context context) {
         roomdb = Room.databaseBuilder(context, DictionaryBase.class, "database-dictionary-name").allowMainThreadQueries().build();
+        roomdb.dictionaryDao().insertAll(new DictionaryData("Example", false));
     }
 
     public ArrayList<DictionaryData> getDictionaries() {
+        dictionaries.clear();
+        dictionaries.addAll(roomdb.dictionaryDao().getAll());
         return dictionaries;
     }
 
