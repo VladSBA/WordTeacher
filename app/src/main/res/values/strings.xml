@@ -6,4 +6,7 @@
     <string name="meaning">meaning of the word</string>
     <string name="not_fields_filled">Not all fields are filled</string>
     <string name="name_is_empty">Dictionary name is empty</string>
+    <string name="word_image">Word image</string>
+    <string name="add_word">Add word</string>
+    <string name="confirm">Confirm</string>
 </resources>
