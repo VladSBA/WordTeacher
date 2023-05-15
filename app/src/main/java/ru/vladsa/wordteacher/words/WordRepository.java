@@ -1,19 +1,18 @@
-package ru.vladsa.wordteacher.dictionaries.words;
+package ru.vladsa.wordteacher.words;
 
 import android.content.Context;
 
 import androidx.room.Room;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import ru.vladsa.wordteacher.dictionaries.words.data.WordBase;
+import ru.vladsa.wordteacher.words.data.WordBase;
 
 public class WordRepository {
 
     private static WordRepository instance = null;
-    private WordBase roomdb;
+    private final WordBase roomdb;
 
     public static WordRepository getInstance(Context context) {
         if (instance == null) instance = new WordRepository(context);
@@ -23,7 +22,7 @@ public class WordRepository {
     private final ArrayList<WordData> words = new ArrayList<>();
 
     public WordRepository(Context context) {
-        roomdb = Room.databaseBuilder(context, WordBase.class, "database-name").allowMainThreadQueries().build();
+        roomdb = Room.databaseBuilder(context, WordBase.class, "database-word-name").allowMainThreadQueries().build();
     }
 
     public ArrayList<WordData> getWords() {

@@ -1,4 +1,4 @@
-package ru.vladsa.wordteacher.dictionaries.words;
+package ru.vladsa.wordteacher.words;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +14,7 @@ import ru.vladsa.wordteacher.databinding.ItemWordBinding;
 
 public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
-    public static final String DICTIONARY_ID = "DICT";
-
-    List<WordData> data = new ArrayList<>();
+    List<WordData> words = new ArrayList<>();
 
     public interface OnWordDataClickListener {
         void onWordClick(ViewHolder holder);
@@ -39,9 +37,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
     }
 
 
-    public void setData(List<WordData> newData) {
-        data.clear();
-        data.addAll(newData);
+    public void setWords(List<WordData> newData) {
+        words.clear();
+        words.addAll(newData);
 
         notifyDataSetChanged();
     }
@@ -49,7 +47,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull WordAdapter.ViewHolder holder, int position) {
         // holder.bind(filterData.get(position));
-        holder.bind(data.get(position));
+        holder.bind(words.get(position));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,11 +59,11 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         // return filterData.size();
-        return data.size();
+        return words.size();
     }
 
     public void removeItemByPosition(int position) {
-        data.remove(position);
+        words.remove(position);
         notifyItemRemoved(position);
     }
 

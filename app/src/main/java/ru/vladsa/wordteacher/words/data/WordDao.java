@@ -1,4 +1,4 @@
-package ru.vladsa.wordteacher.dictionaries.words.data;
+package ru.vladsa.wordteacher.words.data;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -8,8 +8,7 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import ru.vladsa.wordteacher.dictionaries.DictionaryData;
-import ru.vladsa.wordteacher.dictionaries.words.WordData;
+import ru.vladsa.wordteacher.words.WordData;
 
 @Dao
 public interface WordDao {

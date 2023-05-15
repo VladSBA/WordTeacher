@@ -8,22 +8,23 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import java.util.ArrayList;
 
 import ru.vladsa.wordteacher.databinding.ActivityMainBinding;
 import ru.vladsa.wordteacher.dictionaries.DictionaryAdapter;
 import ru.vladsa.wordteacher.dictionaries.DictionaryData;
-import ru.vladsa.wordteacher.dictionaries.DictionaryEditActivity;
 import ru.vladsa.wordteacher.dictionaries.DictionaryRepository;
-import ru.vladsa.wordteacher.dictionaries.words.WordData;
-import ru.vladsa.wordteacher.dictionaries.words.WordRepository;
+import ru.vladsa.wordteacher.words.WordData;
+import ru.vladsa.wordteacher.words.WordRepository;
 
 public class MainActivity extends AppCompatActivity {
-
+    private final ArrayList<DictionaryData> data = new ArrayList<>();
 
     private ActivityMainBinding binding;
+
+    private volatile WordRepository wordRepository;
+    private volatile DictionaryRepository dictionaryRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +32,18 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
-        binding.container.setAdapter(adapter);
-
         binding.start.setOnClickListener(view -> start());
         binding.addDictionary.setOnClickListener(view -> addDictionary());
 
-    }
+        wordRepository = WordRepository.getInstance(this);
+        dictionaryRepository = DictionaryRepository.getInstance(this);
 
-    private final WordRepository wordRepository = WordRepository.getInstance(this);
-    private final DictionaryRepository dictionaryRepository = DictionaryRepository.getInstance(this);
+        binding.container.setAdapter(adapter);
+
+
+        adapter.setData(data);
+
+    }
 
 
     DictionaryAdapter.OnDictionaryClickListener clickListener = new DictionaryAdapter.OnDictionaryClickListener() {
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, DictionaryEditActivity.class);
             intent.putExtra(DictionaryEditActivity.DICTIONARY_ID, holder.getAdapterPosition());
 
-//            activityDictionaryEditLauncher.launch(intent);
+            activityDictionaryEditLauncher.launch(intent);
 
         }
     };
@@ -63,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, DictionaryEditActivity.class);
         intent.putExtra(DictionaryEditActivity.DICTIONARY_ID, -1);
 
-//        activityDictionaryEditLauncher.launch(intent);
+        activityDictionaryEditLauncher.launch(intent);
     }
 
     private void start() {
@@ -78,22 +81,22 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = result.getData();
 
                     if (intent != null) {
-                        ArrayList<WordData> wordList = new ArrayList<>();
                         DictionaryData dictionary = new DictionaryData(
                                 intent.getStringExtra(DictionaryEditActivity.DICTIONARY_NAME),
                                 false);
 
                         for (int i = 0; i < intent.getIntExtra(DictionaryEditActivity.WORD_COUNT, 0); i++) {
-                            wordList.add(new WordData(
+                            WordData word = new WordData(
                                     intent.getStringExtra(DictionaryEditActivity.WORD_ID),
                                     intent.getStringExtra(DictionaryEditActivity.MEANING_ID),
                                     intent.getStringExtra(DictionaryEditActivity.IMAGE_ID),
                                     intent.getIntExtra(DictionaryEditActivity.DICTIONARY_ID, 0)
-                            ));
+                            );
+
+                            wordRepository.addWord(word);
                         }
 
                         dictionaryRepository.addDictionary(dictionary);
-                        wordRepository.addWords(wordList);
                     }
                 }
             });

@@ -11,7 +11,7 @@ import ru.vladsa.wordteacher.dictionaries.data.DictionaryBase;
 public class DictionaryRepository {
 
     private static DictionaryRepository instance = null;
-    private DictionaryBase roomdb;
+    private final DictionaryBase roomdb;
 
     public static DictionaryRepository getInstance(Context context) {
         if (instance == null) instance = new DictionaryRepository(context);
@@ -21,7 +21,7 @@ public class DictionaryRepository {
     private final ArrayList<DictionaryData> dictionaries = new ArrayList<>();
 
     public DictionaryRepository(Context context) {
-        roomdb = Room.databaseBuilder(context, DictionaryBase.class, "database-name").allowMainThreadQueries().build();
+        roomdb = Room.databaseBuilder(context, DictionaryBase.class, "database-dictionary-name").allowMainThreadQueries().build();
     }
 
     public ArrayList<DictionaryData> getDictionaries() {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".dictionaries.DictionaryEditActivity">
+    tools:context=".DictionaryEditActivity">
 
     <EditText
         android:id="@+id/name"
@@ -15,7 +15,9 @@
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:inputType="text"
+        android:importantForAutofill="no" />
 
     <ScrollView
         android:id="@+id/root"
@@ -31,7 +33,7 @@
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:padding="4dp"
             tools:listitem="@layout/item_word"
             app:layout_constraintTop_toBottomOf="@+id/name" />
 
@@ -46,7 +48,7 @@
         android:layout_margin="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         android:textSize="16sp"
-        android:text="Add word"
+        android:text="@string/add_word"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/confirm"
         app:layout_constraintStart_toStartOf="parent" />
@@ -61,6 +63,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/add"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/add"
-        android:contentDescription="Confirm" />
+        android:contentDescription="@string/confirm" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

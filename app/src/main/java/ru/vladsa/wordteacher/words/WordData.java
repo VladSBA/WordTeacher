@@ -1,4 +1,4 @@
-package ru.vladsa.wordteacher.dictionaries.words;
+package ru.vladsa.wordteacher.words;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

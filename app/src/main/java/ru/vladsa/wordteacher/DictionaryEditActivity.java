@@ -1,4 +1,4 @@
-package ru.vladsa.wordteacher.dictionaries;
+package ru.vladsa.wordteacher;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,11 +8,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import ru.vladsa.wordteacher.MainActivity;
-import ru.vladsa.wordteacher.R;
 import ru.vladsa.wordteacher.databinding.ActivityDictionaryEditBinding;
-import ru.vladsa.wordteacher.dictionaries.words.WordAdapter;
-import ru.vladsa.wordteacher.dictionaries.words.WordData;
+import ru.vladsa.wordteacher.words.WordAdapter;
+import ru.vladsa.wordteacher.words.WordData;
 
 public class DictionaryEditActivity extends AppCompatActivity {
     public final static String DICTIONARY_ID = "DICT_ID";
@@ -25,7 +23,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
     private final ArrayList<WordData> words = new ArrayList<>();
     private int dictionaryID = -1;
-    private String dictionaryName = "";
+    private final String dictionaryName = "";
 
     private ActivityDictionaryEditBinding binding;
 
@@ -41,6 +39,15 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
         binding.add.setOnClickListener(view -> addWord());
         binding.confirm.setOnClickListener(view -> confirm());
+
+
+        if (words.isEmpty()) {
+            words.add(new WordData("Example", "Example2", null, -1));
+        }
+
+        adapter.setWords(words);
+
+
 
     }
 
@@ -59,7 +66,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
         if (checkFields()) {
             Intent intent = new Intent();
             intent.putExtra(DICTIONARY_ID, dictionaryID);
-            intent.putExtra(DICTIONARY_NAME, dictionaryID);
+            intent.putExtra(DICTIONARY_NAME, dictionaryName);
             intent.putExtra(WORD_COUNT, Integer.toString(words.size()));
 
             for (int i = 0; i < words.size(); i++) {
@@ -82,9 +89,10 @@ public class DictionaryEditActivity extends AppCompatActivity {
         }
 
         for (WordData word : words) {
-            if(word.getWord().isEmpty() || word.getMeaning().isEmpty())
+            if(word.getWord().isEmpty() || word.getMeaning().isEmpty()) {
                 Toast.makeText(this, R.string.not_fields_filled, Toast.LENGTH_SHORT).show();
                 return false;
+            }
         }
 
         return true;
@@ -92,6 +100,9 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
     private void addWord() {
         words.add(new WordData("", "", null, 0));
+        adapter.setWords(words);
+
+
     }
 
     //TODO: Saving words

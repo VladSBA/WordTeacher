@@ -1,4 +1,4 @@
-package ru.vladsa.wordteacher.dictionaries.words.data;
+package ru.vladsa.wordteacher.words.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
-import ru.vladsa.wordteacher.dictionaries.words.WordData;
+import ru.vladsa.wordteacher.words.WordData;
 
 public class WordDataBaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "word.db";
