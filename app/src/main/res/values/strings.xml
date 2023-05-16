@@ -9,4 +9,8 @@
     <string name="word_image">Word image</string>
     <string name="add_word">Add word</string>
     <string name="confirm">Confirm</string>
+    <string name="next">Next</string>
+    <string name="image">Image</string>
+    <string name="word_annotation">Word:</string>
+    <string name="meaning_annotation">Meaning:</string>
 </resources>

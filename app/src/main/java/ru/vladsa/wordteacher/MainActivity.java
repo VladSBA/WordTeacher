@@ -9,8 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import java.util.ArrayList;
-
 import ru.vladsa.wordteacher.databinding.ActivityMainBinding;
 import ru.vladsa.wordteacher.dictionaries.DictionaryAdapter;
 import ru.vladsa.wordteacher.dictionaries.DictionaryData;
@@ -68,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void start() {
+        Intent intent = new Intent(MainActivity.this, LearningActivity.class);
+
         //TODO: Start learning
     }
 
