@@ -13,7 +13,6 @@ import java.util.List;
 import ru.vladsa.wordteacher.databinding.ItemDictionaryBinding;
 
 public class DictionaryAdapter extends RecyclerView.Adapter<DictionaryAdapter.ViewHolder> {
-
     private static final List<DictionaryData> data = new ArrayList<>();
 
     public interface OnDictionaryClickListener {
@@ -74,10 +73,12 @@ public class DictionaryAdapter extends RecyclerView.Adapter<DictionaryAdapter.Vi
             itemDictionaryBinding = ItemDictionaryBinding.bind(itemView);
         }
 
-        public void bind(DictionaryData dictionaryData) {
-            itemDictionaryBinding.name.setText(dictionaryData.getName());
-            itemDictionaryBinding.count.setText(dictionaryData.getWordCount());
-            itemDictionaryBinding.value.setChecked(dictionaryData.getValue());
+        public void bind(DictionaryData data) {
+            if (!data.getName().isEmpty()) {
+                itemDictionaryBinding.name.setText(data.getName());
+            }
+            itemDictionaryBinding.count.setText(data.getWordCount());
+            itemDictionaryBinding.value.setChecked(data.getValue());
         }
     }
 }
