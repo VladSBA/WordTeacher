@@ -19,12 +19,27 @@ import ru.vladsa.wordteacher.words.WordData;
 import ru.vladsa.wordteacher.words.WordRepository;
 
 public class MainActivity extends AppCompatActivity {
-    private final ArrayList<DictionaryData> data = new ArrayList<>();
 
     private ActivityMainBinding binding;
 
     private volatile WordRepository wordRepository;
     private volatile DictionaryRepository dictionaryRepository;
+
+    DictionaryAdapter.OnDictionaryClickListener clickListener = new DictionaryAdapter.OnDictionaryClickListener() {
+
+        @Override
+        public void onDictionaryClick(DictionaryAdapter.ViewHolder holder) {
+            Intent intent = new Intent(MainActivity.this, DictionaryEditActivity.class);
+            intent.putExtra(DictionaryEditActivity.DICTIONARY_ID, holder.getAdapterPosition());
+
+            activityDictionaryEditLauncher.launch(intent);
+
+        }
+    };
+
+
+    private final DictionaryAdapter adapter = new DictionaryAdapter(clickListener);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,22 +58,6 @@ public class MainActivity extends AppCompatActivity {
         adapter.setData(dictionaryRepository.getDictionaries());
 
     }
-
-
-    DictionaryAdapter.OnDictionaryClickListener clickListener = new DictionaryAdapter.OnDictionaryClickListener() {
-
-        @Override
-        public void onDictionaryClick(DictionaryAdapter.ViewHolder holder) {
-            Intent intent = new Intent(MainActivity.this, DictionaryEditActivity.class);
-            intent.putExtra(DictionaryEditActivity.DICTIONARY_ID, holder.getAdapterPosition());
-
-            activityDictionaryEditLauncher.launch(intent);
-
-        }
-    };
-
-
-    private final DictionaryAdapter adapter = new DictionaryAdapter(clickListener);
 
 
     private void addDictionary() {

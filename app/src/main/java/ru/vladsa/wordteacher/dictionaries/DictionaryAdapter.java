@@ -14,7 +14,7 @@ import ru.vladsa.wordteacher.databinding.ItemDictionaryBinding;
 
 public class DictionaryAdapter extends RecyclerView.Adapter<DictionaryAdapter.ViewHolder> {
 
-    List<DictionaryData> data = new ArrayList<>();
+    private static final List<DictionaryData> data = new ArrayList<>();
 
     public interface OnDictionaryClickListener {
         void onDictionaryClick(ViewHolder holder);
