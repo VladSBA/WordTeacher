@@ -1,5 +1,6 @@
 package ru.vladsa.wordteacher.words;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -83,5 +84,17 @@ public class WordData implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(word, meaning, image);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "WordData{" +
+                "id=" + id +
+                ", word='" + word + '\'' +
+                ", meaning='" + meaning + '\'' +
+                ", image='" + image + '\'' +
+                ", dictionaryID=" + dictionaryID +
+                '}';
     }
 }

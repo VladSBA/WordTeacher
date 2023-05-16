@@ -13,4 +13,6 @@
     <string name="image">Image</string>
     <string name="word_annotation">Word:</string>
     <string name="meaning_annotation">Meaning:</string>
+    <string name="right">Right</string>
+    <string name="wrong">Wrong</string>
 </resources>

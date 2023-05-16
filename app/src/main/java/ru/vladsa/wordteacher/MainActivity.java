@@ -1,5 +1,11 @@
 package ru.vladsa.wordteacher;
 
+import static ru.vladsa.wordteacher.LearningActivity.DICTIONARY_ID_;
+import static ru.vladsa.wordteacher.LearningActivity.IMAGE_;
+import static ru.vladsa.wordteacher.LearningActivity.MEANING_;
+import static ru.vladsa.wordteacher.LearningActivity.WORD_;
+import static ru.vladsa.wordteacher.LearningActivity.WORD_COUNT;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -8,6 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ru.vladsa.wordteacher.databinding.ActivityMainBinding;
 import ru.vladsa.wordteacher.dictionaries.DictionaryAdapter;
@@ -17,6 +27,8 @@ import ru.vladsa.wordteacher.words.WordData;
 import ru.vladsa.wordteacher.words.WordRepository;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String LOG_TAG = "Log_debug_1";
 
     private ActivityMainBinding binding;
 
@@ -55,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
         adapter.setData(dictionaryRepository.getDictionaries());
 
+        Log.d(LOG_TAG, "MainActivity has been created");
+
     }
 
 
@@ -66,9 +80,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void start() {
-        Intent intent = new Intent(MainActivity.this, LearningActivity.class);
+        Log.d(LOG_TAG, "Starting learning");
 
-        //TODO: Start learning
+        ArrayList<WordData> exampleWordData = new ArrayList<>();
+        exampleWordData.add(new WordData ("Example 1", "Example meaning 1", null, 0));
+        exampleWordData.add(new WordData ("Example 2", "Example meaning 2", null, 0));
+        exampleWordData.add(new WordData ("Example 3", "Example meaning 3", null, 0));
+
+        Intent intent = new Intent(MainActivity.this, LearningActivity.class);
+        insertWordList(intent, exampleWordData);
+
+        startActivity(intent);
+
+        Log.d(LOG_TAG, "Learning started");
+
+    }
+
+    private void insertWordList(Intent intent, List<WordData> wordList) {
+        intent.putExtra(WORD_COUNT, wordList.size());
+
+        for (int i = 0; i < wordList.size(); i++) {
+            WordData word = wordList.get(i);
+
+            intent.putExtra(WORD_ + i, word.getWord());
+            intent.putExtra(MEANING_ + i, word.getMeaning());
+            intent.putExtra(IMAGE_ + i, word.getImage());
+            //TODO: Put image to extra
+            intent.putExtra(DICTIONARY_ID_ + i, word.getDictionaryID());
+        }
+
     }
 
     private final ActivityResultLauncher<Intent> activityDictionaryEditLauncher = registerForActivityResult(
