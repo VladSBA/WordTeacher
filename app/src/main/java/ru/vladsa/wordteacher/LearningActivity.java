@@ -31,6 +31,9 @@ public class LearningActivity extends AppCompatActivity {
     private HashMap<WordData, Integer> wordMap = new HashMap<>();
     private final TreeSet<Integer> tempID = new TreeSet<>();
 
+    private int rightAnswers = 0;
+    private int wrongAnswers = 0;
+
     private int activeWord = 0;
     private int maxRightWords;
     private int wrongWordShift;
@@ -45,7 +48,7 @@ public class LearningActivity extends AppCompatActivity {
         Intent intent = getIntent();
         wordList = getWordsFromExtra(intent);
         wordMap = getWordsFromList(wordList, 0);
-        maxRightWords = intent.getIntExtra(MAX_RIGHT_WORDS, 2);
+        maxRightWords = intent.getIntExtra(MAX_RIGHT_WORDS, 2) - 1;
         wrongWordShift = intent.getIntExtra(WRONG_WORD_SHIFT, 2);
 
 
@@ -63,32 +66,28 @@ public class LearningActivity extends AppCompatActivity {
     }
 
     private void displayWord(int position) {
-        if (!wordList.isEmpty()) {
-            WordData displayedWord = wordList.get(position);
+        WordData displayedWord = wordList.get(position);
 
-            binding.word.setText(displayedWord.getWord());
-            binding.meaning.setText(displayedWord.getMeaning());
-            //TODO: Set image
+        binding.word.setText(displayedWord.getWord());
+        binding.meaning.setText(displayedWord.getMeaning());
+        //TODO: Set image
 
-            binding.image.setVisibility(View.GONE);
-            binding.meaningAnnotation.setVisibility(View.GONE);
-            binding.meaning.setVisibility(View.GONE);
-            binding.right.setVisibility(View.GONE);
-            binding.wrong.setVisibility(View.GONE);
+        binding.image.setVisibility(View.GONE);
+        binding.meaningAnnotation.setVisibility(View.GONE);
+        binding.meaning.setVisibility(View.GONE);
+        binding.right.setVisibility(View.GONE);
+        binding.wrong.setVisibility(View.GONE);
 
-            binding.next.setVisibility(View.VISIBLE);
+        binding.next.setVisibility(View.VISIBLE);
 
-            if (tempID.contains(position)) {
-                tempID.remove(position);
-                wordList.remove(position);
-                activeWord--;
-            }
-
-            Log.d(LOG_TAG, String.format("Word %s at position %s has been displayed", displayedWord, position));
-        } else {
-            Log.d(LOG_TAG, String.format("Exit at word at position %d", position));
-            finish();
+        if (tempID.contains(position)) {
+            tempID.remove(position);
+            wordList.remove(position);
+            activeWord--;
         }
+
+        Log.d(LOG_TAG, String.format("Word %s at position %s has been displayed", displayedWord, position));
+
     }
 
 
@@ -116,25 +115,36 @@ public class LearningActivity extends AppCompatActivity {
 
     private void right() {
         Log.d(LOG_TAG, "Right");
+        rightAnswers++;
 
         WordData word = wordList.get(activeWord % wordList.size());
         int value = wordMap.get(word);
 
         if (value >= maxRightWords) {
             Log.d(LOG_TAG, String.format("Remove %s at %d", word, activeWord));
-            wordList.remove(activeWord == 0 ? 0 : wordList.size() % activeWord);
+            int oldSize = wordList.size();
+            wordList.remove(activeWord % wordList.size());
+            int count = activeWord / oldSize;
+            activeWord = count * wordList.size() + activeWord % oldSize - 1;
         } else {
             value++;
             wordMap.put(word, value);
         }
 
         activeWord++;
-        displayWord(activeWord % wordList.size());
+
+        if (wordList.size() == 0) {
+            Log.d(LOG_TAG, "Exit because wordList is null");
+            finish();
+        } else {
+            displayWord(activeWord % wordList.size());
+        }
 
     }
 
     private void wrong() {
         Log.d(LOG_TAG, "Wrong");
+        wrongAnswers++;
 
         WordData word = wordList.get(activeWord % wordList.size());
         int value = wordMap.get(word);
