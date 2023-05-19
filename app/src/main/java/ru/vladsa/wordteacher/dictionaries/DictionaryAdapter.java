@@ -79,6 +79,7 @@ public class DictionaryAdapter extends RecyclerView.Adapter<DictionaryAdapter.Vi
             super(itemView);
             dictionaryBinding = ItemDictionaryBinding.bind(itemView);
 
+            itemView.setOnClickListener(this);
             dictionaryBinding.value.setOnCheckedChangeListener(this);
 
             listenerRef = new WeakReference<>(listener);

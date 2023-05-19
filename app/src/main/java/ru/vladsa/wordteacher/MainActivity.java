@@ -1,6 +1,7 @@
 package ru.vladsa.wordteacher;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;

@@ -1,5 +1,6 @@
 package ru.vladsa.wordteacher.words;
 
+import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -28,6 +29,8 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
         void onPositionClicked(int position);
 
         void onLongClicked(int position);
+
+        Bitmap onImageButtonClicked(int position);
     }
 
     private final Listener listener;
@@ -113,7 +116,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
             itemView.setOnClickListener(this);
             wordBinding.word.setOnClickListener(this);
             wordBinding.meaning.setOnClickListener(this);
-            //TODO: Set on image click listener
+            wordBinding.image.setOnClickListener(this);
 
             wordBinding.word.setOnFocusChangeListener(this);
             wordBinding.meaning.setOnFocusChangeListener(this);
@@ -146,10 +149,13 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
         @Override
         public void onClick(View v) {
-            //TODO: Handle long click
+            if (v.getId() == wordBinding.image.getId()) {
+                wordBinding.image.setImageBitmap(listenerRef.get().onImageButtonClicked(getAdapterPosition()));
+            }
 
             listenerRef.get().onPositionClicked(getAdapterPosition());
         }
+
 
         @Override
         public boolean onLongClick(View v) {
@@ -178,5 +184,6 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
         public void afterTextChanged(Editable s) {
             setWords();
         }
+
     }
 }
