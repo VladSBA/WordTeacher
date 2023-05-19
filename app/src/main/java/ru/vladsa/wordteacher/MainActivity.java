@@ -1,20 +1,15 @@
 package ru.vladsa.wordteacher;
 
-import static ru.vladsa.wordteacher.LearningActivity.DICTIONARY_ID_;
-import static ru.vladsa.wordteacher.LearningActivity.IMAGE_;
-import static ru.vladsa.wordteacher.LearningActivity.MEANING_;
-import static ru.vladsa.wordteacher.LearningActivity.WORD_;
-import static ru.vladsa.wordteacher.LearningActivity.WORD_COUNT;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +22,11 @@ import ru.vladsa.wordteacher.words.WordData;
 import ru.vladsa.wordteacher.words.WordRepository;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String WORD_COUNT = "Word_count";
+    public static final String DICTIONARY_ID = "Dictionary_id";
+    public static final String DICTIONARY = "Dictionary";
+    public static final String WORDS = "Words";
+    public static final String IS_NEW_DICTIONARY = "Is_new_dict";
 
     public static final String LOG_TAG = "Log_debug_1";
 
@@ -35,20 +35,30 @@ public class MainActivity extends AppCompatActivity {
     private volatile WordRepository wordRepository;
     private volatile DictionaryRepository dictionaryRepository;
 
-    DictionaryAdapter.OnDictionaryClickListener clickListener = new DictionaryAdapter.OnDictionaryClickListener() {
+    DictionaryAdapter.Listener listener = new DictionaryAdapter.Listener() {
 
         @Override
-        public void onDictionaryClick(DictionaryAdapter.ViewHolder holder) {
+        public void onPositionClicked(int position) {
+            Log.d(LOG_TAG, "Starting dictionary Editing at " + position);
+
             Intent intent = new Intent(MainActivity.this, DictionaryEditActivity.class);
-            intent.putExtra(DictionaryEditActivity.DICTIONARY_ID, holder.getAdapterPosition());
+
+            intent.putExtra(IS_NEW_DICTIONARY, false);
+            intent.putExtra(DICTIONARY, dictionaryRepository.getDictionaries().get(position));
+            putWordListToExtra(intent, wordRepository.getDictionaryWords(
+                    dictionaryRepository.getDictionaries().get(position).getId()));
 
             activityDictionaryEditLauncher.launch(intent);
+        }
+
+        @Override
+        public void onLongClicked(int position) {
 
         }
     };
 
 
-    private final DictionaryAdapter adapter = new DictionaryAdapter(clickListener);
+    private final DictionaryAdapter adapter = new DictionaryAdapter(listener);
 
 
     @Override
@@ -71,43 +81,71 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public int getWordCount(long dictionaryID) {
+        List<WordData> data = wordRepository.getDictionaryWords(dictionaryID);
+        return data.size();
+    }
+
 
     private void addDictionary() {
+        Log.d(LOG_TAG, "Adding dictionary...");
         Intent intent = new Intent(MainActivity.this, DictionaryEditActivity.class);
-        intent.putExtra(DictionaryEditActivity.DICTIONARY_ID, -1);
+        intent.putExtra(IS_NEW_DICTIONARY, true);
+        intent.putExtra(DICTIONARY_ID, Long.valueOf(dictionaryRepository.getAllDictionariesCount() + 1));
+        intent.putExtra(WORDS, new ArrayList<WordData>());
 
         activityDictionaryEditLauncher.launch(intent);
     }
 
     private void start() {
-        Log.d(LOG_TAG, "Starting learning");
+        Log.d(LOG_TAG, "Starting learning...");
 
-        ArrayList<WordData> exampleWordData = new ArrayList<>();
-        exampleWordData.add(new WordData ("Example 1", "Example meaning 1", null, 0));
-        exampleWordData.add(new WordData ("Example 2", "Example meaning 2", null, 0));
-        exampleWordData.add(new WordData ("Example 3", "Example meaning 3", null, 0));
+        ArrayList<DictionaryData> dictionaries = (ArrayList<DictionaryData>) adapter.getDictionaries();
 
-        Intent intent = new Intent(MainActivity.this, LearningActivity.class);
-        insertWordList(intent, exampleWordData);
+        for (int i = 0; i < dictionaries.size(); i++) {
+            if (dictionaries.get(i).getValue() != dictionaryRepository.getDictionaries().get(i).getValue()) {
+                dictionaryRepository.updateDictionary(dictionaries.get(i));
+            }
+        }
 
-        startActivity(intent);
+        ArrayList<WordData> words = new ArrayList<>();
 
-        Log.d(LOG_TAG, "Learning started");
+        for (DictionaryData dictionary : dictionaries) {
+            if (dictionary.getValue()) {
+                words.addAll(wordRepository.getDictionaryWords(dictionary.getId()));
+            }
+        }
+
+
+        if (words.isEmpty()) {
+            Toast.makeText(this, R.string.no_dictionary_selected, Toast.LENGTH_SHORT).show();
+            Log.d(LOG_TAG, "No dictionary selected. LearningActivity not started.");
+        } else {
+            Intent intent = new Intent(MainActivity.this, LearningActivity.class);
+            putWordListToExtra(intent, words);
+
+            startActivity(intent);
+            Log.d(LOG_TAG, "Learning started");
+        }
+
+
 
     }
 
-    private void insertWordList(Intent intent, List<WordData> wordList) {
+    private void putWordListToExtra(Intent intent, List<WordData> wordList) {
         intent.putExtra(WORD_COUNT, wordList.size());
 
-        for (int i = 0; i < wordList.size(); i++) {
+        intent.putExtra(WORDS, (ArrayList<WordData>) wordList);
+
+        /*for (int i = 0; i < wordList.size(); i++) {
             WordData word = wordList.get(i);
 
             intent.putExtra(WORD_ + i, word.getWord());
             intent.putExtra(MEANING_ + i, word.getMeaning());
             intent.putExtra(IMAGE_ + i, word.getImage());
-            //TODO: Put image to extra
-            intent.putExtra(DICTIONARY_ID_ + i, word.getDictionaryID());
-        }
+            intent.putExtra(ID_ + i, word.getId());
+            //TODO: Transfer image
+        }*/
 
     }
 
@@ -116,25 +154,47 @@ public class MainActivity extends AppCompatActivity {
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-                    Intent intent = result.getData();
+                    Intent data = result.getData();
 
-                    if (intent != null) {
-                        DictionaryData dictionary = new DictionaryData(
-                                intent.getStringExtra(DictionaryEditActivity.DICTIONARY_NAME),
-                                false);
+                    if (data != null) {
+                        boolean isNewDictionary = data.getBooleanExtra(IS_NEW_DICTIONARY, false);
 
-                        for (int i = 0; i < intent.getIntExtra(DictionaryEditActivity.WORD_COUNT, 0); i++) {
-                            WordData word = new WordData(
-                                    intent.getStringExtra(DictionaryEditActivity.WORD_ID),
-                                    intent.getStringExtra(DictionaryEditActivity.MEANING_ID),
-                                    intent.getStringExtra(DictionaryEditActivity.IMAGE_ID),
-                                    intent.getIntExtra(DictionaryEditActivity.DICTIONARY_ID, 0)
-                            );
+                        /*DictionaryData dictionary = new DictionaryData(
+                          data.getStringExtra(DICTIONARY_NAME),
+                          data.getLongExtra(WORD_COUNT, 0),
+                          data.getBooleanExtra(DICTIONARY_VALUE, false)
+                        );*/
 
-                            wordRepository.addWord(word);
+                        DictionaryData dictionary = (DictionaryData) data.getSerializableExtra(DICTIONARY);
+                        List<WordData> words = (ArrayList<WordData>) data.getSerializableExtra(WORDS);
+
+                        for (WordData word :words) {
+                            if (wordRepository.getWordsFromId(word.getId()).size() == 0) {
+                                wordRepository.addWord(word);
+                            } else {
+                                wordRepository.updateWord(word);
+                            }
                         }
 
-                        dictionaryRepository.addDictionary(dictionary);
+
+                        /*for (int i = 0; i < data.getIntExtra(WORD_COUNT, 0); i++) {
+                            WordData word = new WordData(
+                                    data.getStringExtra(WORD_ + i),
+                                    data.getStringExtra(MEANING_ + i),
+                                    data.getStringExtra(IMAGE_ + i),
+                                    data.getLongExtra(DICTIONARY_ID, 0)
+                            );
+                            wordRepository.addWord(word);
+                        }*/
+
+                        if (isNewDictionary) {
+                            dictionaryRepository.addDictionary(dictionary);
+                        } else {
+                            dictionaryRepository.updateDictionary(dictionary);
+                        }
+
+                        adapter.setData(dictionaryRepository.getDictionaries());
+
                     }
                 }
             });

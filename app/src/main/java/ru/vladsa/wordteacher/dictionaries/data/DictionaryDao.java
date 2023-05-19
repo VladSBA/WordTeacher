@@ -6,7 +6,6 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import java.util.Dictionary;
 import java.util.List;
 
 import ru.vladsa.wordteacher.dictionaries.DictionaryData;
@@ -18,6 +17,12 @@ public interface DictionaryDao {
 
     @Query("SELECT * FROM DictionaryData WHERE title like:search")
     List<DictionaryData> getFromLike(String search);
+
+    @Query("SELECT * FROM DictionaryData WHERE id like:id")
+    List<DictionaryData> getFromId(long id);
+
+    @Query("SELECT * FROM DictionaryData WHERE value like:value")
+    List<DictionaryData> getFromValue(String value);
 
     @Insert
     void insertAll(DictionaryData... dictionary);

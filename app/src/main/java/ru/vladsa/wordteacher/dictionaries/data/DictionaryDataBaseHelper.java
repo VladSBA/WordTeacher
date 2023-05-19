@@ -21,10 +21,12 @@ public class DictionaryDataBaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_TITLE = "title";
     private static final String COLUMN_VALUE = "value";
+    private static final String COLUMN_WORD_COUNT = "count";
 
     private static final long NUM_COLUMN_ID = 0;
     private static final int NUM_COLUMN_TITLE = 1;
     private static final int NUM_COLUMN_VALUE = 2;
+    private static final int NUM_WORD_COUNT = 3;
 
     SQLiteDatabase database;
 
@@ -38,6 +40,7 @@ public class DictionaryDataBaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_TITLE, data.getName());
         cv.put(COLUMN_VALUE, data.getValue());
+        cv.put(COLUMN_WORD_COUNT, data.getWordCount());
         database.insert(TABLE_NAME, null, cv);
     }
 
@@ -56,7 +59,9 @@ public class DictionaryDataBaseHelper extends SQLiteOpenHelper {
         do {
             result.add(new DictionaryData(
                     cursor.getString(NUM_COLUMN_TITLE),
-                    Boolean.parseBoolean(cursor.getString(NUM_COLUMN_VALUE))));
+                    cursor.getLong(NUM_WORD_COUNT),
+                    Boolean.parseBoolean(cursor.getString(NUM_COLUMN_VALUE))
+            ));
         } while (cursor.moveToNext());
         cursor.close();
         return result;
@@ -68,7 +73,8 @@ public class DictionaryDataBaseHelper extends SQLiteOpenHelper {
         String query = "CREATE TABLE " + TABLE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_TITLE + " TEXT, " +
-                COLUMN_VALUE + " TEXT); ";
+                COLUMN_VALUE + " TEXT, " +
+                COLUMN_WORD_COUNT + " INTEGER); ";
         db.execSQL(query);
 
     }

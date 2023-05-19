@@ -25,8 +25,27 @@ public class WordRepository {
         roomdb = Room.databaseBuilder(context, WordBase.class, "database-word-name").allowMainThreadQueries().build();
     }
 
-    public ArrayList<WordData> getWords() {
+    public List<WordData> getWords() {
         return words;
+    }
+
+    public List<WordData> getDictionaryWords(long search){
+        words.clear();
+        words.addAll(roomdb.wordDao().getFromDictionary(search));
+        return words;
+    }
+
+    public int getAllWordCount() {
+        words.clear();
+        words.addAll(roomdb.wordDao().getAll());
+        return words.size();
+    }
+
+    public List<WordData> getLike(String search){
+        words.clear();
+        words.addAll(roomdb.wordDao().getFromLike(search));
+        return words;
+
     }
 
     public void addWord(WordData wordData) {
@@ -44,4 +63,28 @@ public class WordRepository {
         words.addAll(wordData);
 
     }
+
+    public List<WordData> getWordsFromId(long id) {
+        words.clear();
+        words.addAll(roomdb.wordDao().getWordsFromId(id));
+        return words;
+    }
+
+    public List<WordData> getWordsFromDictionary(long id) {
+        words.clear();
+        words.addAll(roomdb.wordDao().getFromDictionary(id));
+        return words;
+    }
+
+
+    public void removeByPosition(WordData word) {
+        roomdb.wordDao().delete(word);
+        words.remove(word);
+
+    }
+
+    public void updateWord(WordData temp) {
+        roomdb.wordDao().update(temp);
+    }
+
 }

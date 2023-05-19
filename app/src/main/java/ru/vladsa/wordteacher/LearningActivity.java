@@ -1,12 +1,15 @@
 package ru.vladsa.wordteacher;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static ru.vladsa.wordteacher.MainActivity.WORDS;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,11 +22,6 @@ public class LearningActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = MainActivity.LOG_TAG + " (LearningActivity)";
 
-    public static final String WORD_COUNT = "Word_count";
-    public static final String WORD_ = "Word_";
-    public static final String MEANING_ = "Meaning_";
-    public static final String IMAGE_ = "Image_";
-    public static final String DICTIONARY_ID_ = "Dict_id_";
     public static final String MAX_RIGHT_WORDS = "MRW";
     public static final String WRONG_WORD_SHIFT = "WWS";
 
@@ -42,6 +40,8 @@ public class LearningActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "Creating LearningActivity...");
+
         super.onCreate(savedInstanceState);
         binding = ActivityLearningBinding.inflate(getLayoutInflater());
 
@@ -51,6 +51,11 @@ public class LearningActivity extends AppCompatActivity {
         maxRightWords = intent.getIntExtra(MAX_RIGHT_WORDS, 2) - 1;
         wrongWordShift = intent.getIntExtra(WRONG_WORD_SHIFT, 2);
 
+        if (wordList.isEmpty()) {
+            Log.d(LOG_TAG, "Word list empty. Finishing activity...");
+            finish();
+            Log.d(LOG_TAG, "LearningActivity had finished");
+        }
 
         displayWord(activeWord % wordList.size());
 
@@ -163,21 +168,22 @@ public class LearningActivity extends AppCompatActivity {
     }
 
 
-    private LinkedList<WordData> getWordsFromExtra(Intent intent) {
-        LinkedList<WordData> words = new LinkedList<>();
+    private LinkedList<WordData> getWordsFromExtra(Intent data) {
+        Log.d(LOG_TAG, "Getting words from extra...");
 
-        int word_count = intent.getIntExtra(WORD_COUNT, 0);
+        LinkedList<WordData> words = new LinkedList<>((ArrayList<WordData>) data.getSerializableExtra(WORDS));
 
-        for (int i = 0; i < word_count; i++) {
+
+        /*for (int i = 0; i < data.getIntExtra(WORD_COUNT, 0); i++) {
             words.add(new WordData(
-                    intent.getStringExtra(WORD_ + i),
-                    intent.getStringExtra(MEANING_ + i),
-                    intent.getStringExtra(IMAGE_ + i),
-                    //TODO: get image from extra
-                    intent.getLongExtra(DICTIONARY_ID_ + i, -1)
+                    data.getStringExtra(WORD_ + i),
+                    data.getStringExtra(MEANING_ + i),
+                    data.getStringExtra(IMAGE_ + i),
+                    data.getLongExtra(DICTIONARY_ID, 0)
             ));
+            //TODO: Get image
         }
-
+*/
         return words;
     }
 }

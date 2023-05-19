@@ -18,8 +18,14 @@ public interface WordDao {
     @Query("SELECT * FROM WordData WHERE word like:search or meaning like :search or dictionary like :search")
     List<WordData> getFromLike(String search);
 
+    @Query("SELECT * FROM WordData WHERE dictionary like:search")
+    List<WordData> getFromDictionary(long search);
+
     @Query("SELECT * FROM WordData WHERE image like :image")
     List<WordData> findImageUsage(String image);
+
+    @Query("SELECT * FROM WordData WHERE id like :id")
+    List<WordData> getWordsFromId(long id);
 
     @Insert
     void insertAll(WordData... wordData);

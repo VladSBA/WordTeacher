@@ -4,10 +4,11 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-public class DictionaryData {
+public class DictionaryData implements Serializable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private long id;
@@ -15,18 +16,25 @@ public class DictionaryData {
     @ColumnInfo(name = "title")
     private String name;
 
+    @ColumnInfo(name = "count")
+    private long wordCount;
+
     @ColumnInfo(name = "value")
     private boolean value;
 
-    public DictionaryData(String name, boolean value) {
+    public DictionaryData(String name, long wordCount, boolean value) {
         this.id = 0;
         this.name = name;
+        this.wordCount = wordCount;
         this.value = value;
     }
 
-    public int getWordCount() {
-        //TODO: getWordCount
-        return 0;
+    public void setWordCount(long wordCount) {
+        this.wordCount = wordCount;
+    }
+
+    public long getWordCount() {
+        return wordCount;
     }
 
     public long getId() {
@@ -57,11 +65,11 @@ public class DictionaryData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DictionaryData that = (DictionaryData) o;
-        return value == that.value && getWordCount() == that.getWordCount() && name.equals(that.name);
+        return value == that.value && wordCount == that.wordCount && name.equals(that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, value, getWordCount());
+        return Objects.hash(name, value, wordCount);
     }
 }
