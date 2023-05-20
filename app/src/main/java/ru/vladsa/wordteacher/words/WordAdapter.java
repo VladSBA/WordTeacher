@@ -1,6 +1,9 @@
 package ru.vladsa.wordteacher.words;
 
+import static ru.vladsa.wordteacher.DictionaryEditActivity.GETTING_IMAGE;
+
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -30,7 +33,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
         void onLongClicked(int position);
 
-        Bitmap onImageButtonClicked(int position);
+        void onImageButtonClicked(int position);
     }
 
     private final Listener listener;
@@ -126,6 +129,14 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
         public void bind(WordData word) {
             wordBinding.word.setText(word.getWord());
             wordBinding.meaning.setText(word.getMeaning());
+
+            if (word.getImage() != null && !word.getImage().isEmpty() && !word.getImage().equals(GETTING_IMAGE)) {
+                Bitmap bitmap = BitmapFactory.decodeFile(word.getImage());
+                wordBinding.image.setImageBitmap(bitmap);
+            }
+
+
+
             //TODO: set Image
 
             /*wordBinding.word.setOnFocusChangeListener((v, hasFocus) -> {
@@ -150,7 +161,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
         @Override
         public void onClick(View v) {
             if (v.getId() == wordBinding.image.getId()) {
-                wordBinding.image.setImageBitmap(listenerRef.get().onImageButtonClicked(getAdapterPosition()));
+                listenerRef.get().onImageButtonClicked(getAdapterPosition());
             }
 
             listenerRef.get().onPositionClicked(getAdapterPosition());

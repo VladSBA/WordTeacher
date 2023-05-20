@@ -8,6 +8,7 @@ import static ru.vladsa.wordteacher.MainActivity.WORD_COUNT;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,8 +21,11 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import ru.vladsa.wordteacher.databinding.ActivityDictionaryEditBinding;
 import ru.vladsa.wordteacher.dictionaries.DictionaryData;
@@ -30,12 +34,15 @@ import ru.vladsa.wordteacher.words.WordData;
 
 public class DictionaryEditActivity extends AppCompatActivity {
     public final static int RESULT_CODE = 685;
+    public final static String GETTING_IMAGE = "Getting image";
     private DictionaryData dictionary;
 
-    private ArrayList<WordData> words;
+    private LinkedList<WordData> words;
     private boolean isNewDictionary;
     private long dictionaryId;
-    private static Bitmap bitmap;
+    private int lastPosition = -1;
+    private Bitmap bitmap;
+    private Uri selectedImage;
 
     private static final String LOG_TAG = MainActivity.LOG_TAG + " (DEActivity)";
     private final WordAdapter.Listener listener = new WordAdapter.Listener() {
@@ -50,12 +57,8 @@ public class DictionaryEditActivity extends AppCompatActivity {
         }
 
         @Override
-        public Bitmap onImageButtonClicked(int position) {
-            Intent photoPickIntent = new Intent(Intent.ACTION_PICK);
-            photoPickIntent.setType("image/*");
-            pickImageLauncher.launch(photoPickIntent);
-
-            return bitmap;
+        public void onImageButtonClicked(int position) {
+            getBitmap(position);
         }
     };
     private final WordAdapter adapter = new WordAdapter(listener);
@@ -94,8 +97,8 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
     }
 
-    private ArrayList<WordData> getWordsFromExtra(Intent data) {
-        ArrayList<WordData> words = new ArrayList<>();
+    private LinkedList<WordData> getWordsFromExtra(Intent data) {
+        LinkedList<WordData> words = new LinkedList<>();
         words.addAll((ArrayList<WordData>) data.getSerializableExtra(WORDS));
 
         /*int word_count = data.getIntExtra(WORD_COUNT, 0);
@@ -195,8 +198,9 @@ public class DictionaryEditActivity extends AppCompatActivity {
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
+                    Log.d(LOG_TAG, "Picking image...");
                     if (result.getResultCode() == RESULT_OK) {
-                        Uri selectedImage = result.getData().getData();
+                        selectedImage = result.getData().getData();
                         try {
                             bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
                         } catch (IOException e) {
@@ -204,9 +208,73 @@ public class DictionaryEditActivity extends AppCompatActivity {
                         }
                     }
 
+                    saveBitmap(bitmap);
+
                     //TODO: Set result
                 }
             }
     );
+
+    private void saveBitmap(Bitmap bitmap) {
+        Log.d(LOG_TAG, "Saving bitmap...");
+        int position = -1;
+
+        for (int i = 0; i < words.size(); i++) {
+            if (words.get(i).getImage().equals(GETTING_IMAGE)) {
+                position = i;
+            }
+        }
+
+        WordData word = words.get(position);
+
+        String fileName = String.format("%s_image_", bitmap.hashCode());
+
+        for (int i = 0;; i++){
+            File file = this.getDir(fileName + i + ".png", MODE_PRIVATE);
+            try {
+                FileOutputStream fos = null;
+                try {
+                    fos = openFileOutput(fileName + i + ".png", MODE_PRIVATE);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                    bitmap = BitmapFactory.decodeFile(fileName);
+                } finally {
+                    if (fos != null) fos.close();
+                }
+
+                word.setImage(fileName + i + ".png");
+
+                break;
+            } catch (Exception e) {
+                Log.e(LOG_TAG, e.toString());
+                e.printStackTrace();
+            }
+
+        }
+
+        words.remove(position);
+        words.add(position, word);
+
+        adapter.setWords(words);
+
+        //TODO: Save image
+    }
+
+    private void getBitmap(int position) {
+        Log.d(LOG_TAG, String.format("Getting bitmap at position %s...", position));
+
+        WordData word = words.get(position);
+        word.setImage(GETTING_IMAGE);
+        words.remove(position);
+        words.add(position, word);
+
+
+        Intent photoPickIntent = new Intent(Intent.ACTION_PICK);
+        photoPickIntent.setType("image/*");
+        lastPosition = position;
+        pickImageLauncher.launch(photoPickIntent);
+
+
+
+    }
 
 }
