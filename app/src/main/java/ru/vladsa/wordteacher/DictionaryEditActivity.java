@@ -44,6 +44,27 @@ public class DictionaryEditActivity extends AppCompatActivity {
     private Uri selectedImage;
 
     private static final String LOG_TAG = MainActivity.LOG_TAG + " (DEActivity)";
+
+    /*private final ItemTouchHelper.SimpleCallback swipeToDelete = new ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.ACTION_STATE_IDLE,
+            ItemTouchHelper.RIGHT
+    ) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            WordData word = words.get(viewHolder.getAdapterPosition());
+            word.setState(0);
+            words.remove(viewHolder.getAdapterPosition());
+            words.add(viewHolder.getAdapterPosition(), word);
+
+            adapter.removeItemByPosition(viewHolder.getAdapterPosition());
+        }
+    };*/
+
     private final WordAdapter.Listener listener = new WordAdapter.Listener() {
         @Override
         public void onPositionClicked(int position) {
@@ -88,6 +109,8 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
         binding.name.setText(dictionary.getName());
 
+//        new ItemTouchHelper(swipeToDelete).attachToRecyclerView(binding.container);
+
         adapter.setWords(words);
         binding.container.setAdapter(adapter);
 
@@ -127,7 +150,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
             Log.d(LOG_TAG, "DictionaryEditActivity finished");
         }
-        
+
     }
 
     private boolean checkFields() {
@@ -140,7 +163,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
         }
 
         for (WordData word : words) {
-            if(word.getWord().isEmpty() && (word.getMeaning().isEmpty() || word.getImage().isEmpty())) {
+            if (word.getWord().isEmpty() && (word.getMeaning().isEmpty() || word.getImage().isEmpty())) {
                 Toast.makeText(this, R.string.not_fields_filled, Toast.LENGTH_SHORT).show();
                 Log.d(LOG_TAG, "Not all required fields are field");
                 return false;
@@ -153,9 +176,9 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
     private void addWord() {
         if (isNewDictionary) {
-            words.add(new WordData("", "", null, dictionaryId));
+            words.add(new WordData("", "", null, dictionaryId, 1));
         } else {
-            words.add(new WordData("", "", null, dictionary.getId()));
+            words.add(new WordData("", "", null, dictionary.getId(), 1));
         }
 
         adapter.setWords(words);
@@ -200,7 +223,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
         String fileName = String.format("%s_image_", bitmap.hashCode());
 
-        for (int i = 0;; i++){
+        for (int i = 0; ; i++) {
             String name = fileName + i + ".png";
             try {
                 FileOutputStream fos = null;
@@ -250,7 +273,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
         Intent photoPickIntent = new Intent(Intent.ACTION_PICK);
         photoPickIntent.setType("image/*");
         pickImageLauncher.launch(photoPickIntent);
-
 
 
     }

@@ -33,7 +33,7 @@
         app:layout_constraintBottom_toTopOf="@id/image"
         tools:text="@tools:sample/first_names" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/image"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

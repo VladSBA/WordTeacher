@@ -26,12 +26,24 @@ public class WordData implements Serializable {
     @ColumnInfo(name = "dictionary")
     private long dictionaryID;
 
-    public WordData(String word, String meaning, String image, long dictionaryID) {
+    @ColumnInfo(name = "state")
+    private int state;
+
+    public WordData(String word, String meaning, String image, long dictionaryID, int state) {
         this.id = 0;
         this.word = word;
         this.meaning = meaning;
         this.image = image;
         this.dictionaryID = dictionaryID;
+        this.state = state;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 
     public long getDictionaryID() {

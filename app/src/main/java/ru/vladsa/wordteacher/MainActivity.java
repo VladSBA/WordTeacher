@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onLongClicked(int position) {
-
+            //TODO: Menu
         }
     };
 
@@ -162,6 +162,8 @@ public class MainActivity extends AppCompatActivity {
                         for (WordData word :words) {
                             if (wordRepository.getWordsFromId(word.getId()).size() == 0) {
                                 wordRepository.addWord(word);
+                            } else if (word.getState() == 0) {
+                                wordRepository.removeByPosition(word);
                             } else {
                                 wordRepository.updateWord(word);
                             }

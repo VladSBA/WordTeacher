@@ -105,8 +105,10 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener, View.OnLongClickListener, View.OnFocusChangeListener, TextWatcher {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+            View.OnLongClickListener,
+            View.OnFocusChangeListener,
+            TextWatcher {
         private final ItemWordBinding wordBinding;
         private final WeakReference<Listener> listenerRef;
 
@@ -193,6 +195,5 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
         public void afterTextChanged(Editable s) {
             setWords();
         }
-
     }
 }
