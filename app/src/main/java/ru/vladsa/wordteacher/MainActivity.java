@@ -1,7 +1,6 @@
 package ru.vladsa.wordteacher;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -79,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
         adapter.setData(dictionaryRepository.getDictionaries());
 
         Log.d(LOG_TAG, "MainActivity has been created");
+
+//        startActivity(new Intent(MainActivity.this, TestActivity.class));
 
     }
 

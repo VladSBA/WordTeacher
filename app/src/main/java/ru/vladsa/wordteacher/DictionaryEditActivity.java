@@ -8,7 +8,6 @@ import static ru.vladsa.wordteacher.MainActivity.WORD_COUNT;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,6 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,6 +35,7 @@ import ru.vladsa.wordteacher.words.WordData;
 public class DictionaryEditActivity extends AppCompatActivity {
     public final static int RESULT_CODE = 685;
     public final static String GETTING_IMAGE = "Getting image";
+    public final static String IMAGE_DIR = "images";
     private DictionaryData dictionary;
 
     private LinkedList<WordData> words;
@@ -230,22 +231,25 @@ public class DictionaryEditActivity extends AppCompatActivity {
         String fileName = String.format("%s_image_", bitmap.hashCode());
 
         for (int i = 0;; i++){
+            String name = fileName + i + ".png";
             try {
                 FileOutputStream fos = null;
+
+                File oldImage = new File(word.getImage());
+                if (oldImage.delete()) {
+                    Log.d(LOG_TAG, "Old image had deleted");
+                } else {
+                    Log.d(LOG_TAG, "Old image had not deleted");
+                }
+                File dir = getDir(IMAGE_DIR, MODE_PRIVATE);
+                File file = new File(dir.getAbsoluteFile() + "/" + name);
+
+                FileInputStream fis = null;
                 try {
-                    fos = openFileOutput(fileName + i + ".png", MODE_PRIVATE);
+                    fos = new FileOutputStream(file);
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                    File newImage = this.getDir(fileName + i + ".png", MODE_PRIVATE);
-                    bitmap = BitmapFactory.decodeFile(fileName);
 
-                    File oldImage = new File(word.getImage());
-                    if (oldImage.delete()) {
-                        Log.d(LOG_TAG, "Old image had deleted");
-                    } else {
-                        Log.d(LOG_TAG, "Old image had not deleted");
-                    }
-
-                    word.setImage(newImage.getAbsolutePath());
+                    word.setImage(file.getAbsolutePath());
 
                 } finally {
                     if (fos != null) fos.close();
@@ -253,7 +257,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
                 break;
             } catch (Exception e) {
-                Log.e(LOG_TAG, e.toString());
                 e.printStackTrace();
             }
 

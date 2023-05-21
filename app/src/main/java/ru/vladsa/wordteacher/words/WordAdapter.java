@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
@@ -71,7 +73,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
             words.remove(lastWordPosition);
             words.add(lastWordPosition, word);
 
-            //TODO: Set image
+            //TODO: Set image (?)
         }
     }
 
@@ -131,17 +133,18 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
             wordBinding.meaning.setText(word.getMeaning());
 
             if (word.getImage() != null && !word.getImage().equals("null") && !word.getImage().isEmpty() && !word.getImage().equals(GETTING_IMAGE)) {
-                Bitmap bitmap = BitmapFactory.decodeFile(word.getImage());
+                Bitmap bitmap;
+
+                try {
+                    FileInputStream fis = new FileInputStream(word.getImage());
+                    bitmap = BitmapFactory.decodeStream(fis);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+
                 wordBinding.image.setImageBitmap(bitmap);
             }
 
-
-
-            //TODO: set Image
-
-            /*wordBinding.word.setOnFocusChangeListener((v, hasFocus) -> {
-                Log.d(LOG_TAG, String.format("Element %s's focus has been changed", word));
-            });*/
         }
 
         private void setWords() {
@@ -155,7 +158,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
             words.remove(position);
             words.add(position, word);
 
-            //TODO: Set image
+            //TODO: Set image (?)
         }
 
         @Override
