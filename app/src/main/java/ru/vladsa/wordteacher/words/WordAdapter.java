@@ -130,7 +130,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
             wordBinding.word.setText(word.getWord());
             wordBinding.meaning.setText(word.getMeaning());
 
-            if (word.getImage() != null && !word.getImage().isEmpty() && !word.getImage().equals(GETTING_IMAGE)) {
+            if (word.getImage() != null && !word.getImage().equals("null") && !word.getImage().isEmpty() && !word.getImage().equals(GETTING_IMAGE)) {
                 Bitmap bitmap = BitmapFactory.decodeFile(word.getImage());
                 wordBinding.image.setImageBitmap(bitmap);
             }
