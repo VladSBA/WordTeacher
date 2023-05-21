@@ -110,6 +110,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
         binding.name.setText(dictionary.getName());
 
 //        new ItemTouchHelper(swipeToDelete).attachToRecyclerView(binding.container);
+        //TODO: Delete word
 
         adapter.setWords(words);
         binding.container.setAdapter(adapter);
