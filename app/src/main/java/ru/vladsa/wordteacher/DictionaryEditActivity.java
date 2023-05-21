@@ -234,7 +234,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
                 FileOutputStream fos = null;
                 try {
                     fos = openFileOutput(fileName + i + ".png", MODE_PRIVATE);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
                     File newImage = this.getDir(fileName + i + ".png", MODE_PRIVATE);
                     bitmap = BitmapFactory.decodeFile(fileName);
 
