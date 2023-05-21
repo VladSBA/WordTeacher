@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Word Teacher</string>
+    <string name="Start">Начать</string>
+    <string name="dictionary_name">Имя словаря</string>
+    <string name="word">Слово</string>
+    <string name="meaning">Значение слова</string>
+    <string name="not_fields_filled">Не все обязательные поля заполнены</string>
+    <string name="name_is_empty">Имя словаря пустое</string>
+    <string name="word_image">Изображение слова</string>
+    <string name="add_word">Добавить слово</string>
+    <string name="confirm">Потвердить</string>
+    <string name="next">Дальше</string>
+    <string name="image">Изображение</string>
+    <string name="word_annotation">Слово:</string>
+    <string name="meaning_annotation">Значение:</string>
+    <string name="right">Правильно</string>
+    <string name="wrong">Неправильно</string>
+    <string name="add_dictionary">Добавить словарь</string>
+    <string name="no_dictionary_selected">Ни один словарь не выбран</string>
+</resources>

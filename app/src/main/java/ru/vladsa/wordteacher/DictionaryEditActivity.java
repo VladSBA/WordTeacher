@@ -41,7 +41,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
     private boolean isNewDictionary;
     private long dictionaryId;
     private int lastPosition = -1;
-    private Bitmap bitmap;
     private Uri selectedImage;
 
     private static final String LOG_TAG = MainActivity.LOG_TAG + " (DEActivity)";
@@ -199,16 +198,17 @@ public class DictionaryEditActivity extends AppCompatActivity {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     Log.d(LOG_TAG, "Picking image...");
+                    Bitmap bitmap;
                     if (result.getResultCode() == RESULT_OK) {
                         selectedImage = result.getData().getData();
                         try {
                             bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+
+                            saveBitmap(bitmap);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
-
-                    saveBitmap(bitmap);
 
                     //TODO: Set result
                 }
@@ -230,18 +230,26 @@ public class DictionaryEditActivity extends AppCompatActivity {
         String fileName = String.format("%s_image_", bitmap.hashCode());
 
         for (int i = 0;; i++){
-            File file = this.getDir(fileName + i + ".png", MODE_PRIVATE);
             try {
                 FileOutputStream fos = null;
                 try {
                     fos = openFileOutput(fileName + i + ".png", MODE_PRIVATE);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                    File newImage = this.getDir(fileName + i + ".png", MODE_PRIVATE);
                     bitmap = BitmapFactory.decodeFile(fileName);
+
+                    File oldImage = new File(word.getImage());
+                    if (oldImage.delete()) {
+                        Log.d(LOG_TAG, "Old image had deleted");
+                    } else {
+                        Log.d(LOG_TAG, "Old image had not deleted");
+                    }
+
+                    word.setImage(newImage.getAbsolutePath());
+
                 } finally {
                     if (fos != null) fos.close();
                 }
-
-                word.setImage(fileName + i + ".png");
 
                 break;
             } catch (Exception e) {
