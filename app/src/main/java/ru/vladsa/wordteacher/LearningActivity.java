@@ -1,14 +1,19 @@
 package ru.vladsa.wordteacher;
 
+import static ru.vladsa.wordteacher.DictionaryEditActivity.GETTING_IMAGE;
 import static ru.vladsa.wordteacher.MainActivity.WORDS;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -75,6 +80,7 @@ public class LearningActivity extends AppCompatActivity {
 
         binding.word.setText(displayedWord.getWord());
         binding.meaning.setText(displayedWord.getMeaning());
+        binding.image.setImageBitmap(getImage(displayedWord.getImage()));
         //TODO: Set image
 
         binding.image.setVisibility(View.GONE);
@@ -93,6 +99,22 @@ public class LearningActivity extends AppCompatActivity {
 
         Log.d(LOG_TAG, String.format("Word %s at position %s has been displayed", displayedWord, position));
 
+    }
+
+    private Bitmap getImage(String image) {
+        if (image != null && !image.isEmpty() && !image.equals("null") & !image.equals(GETTING_IMAGE)) {
+            Bitmap bitmap;
+
+            try {
+                FileInputStream fis = new FileInputStream(image);
+                bitmap = BitmapFactory.decodeStream(fis);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+            return bitmap;
+        }
+        return null;
     }
 
 
@@ -171,19 +193,9 @@ public class LearningActivity extends AppCompatActivity {
     private LinkedList<WordData> getWordsFromExtra(Intent data) {
         Log.d(LOG_TAG, "Getting words from extra...");
 
-        LinkedList<WordData> words = new LinkedList<>((ArrayList<WordData>) data.getSerializableExtra(WORDS));
+        LinkedList<WordData> words = new LinkedList<>();
+        words.addAll ((ArrayList<WordData>) data.getSerializableExtra(WORDS));
 
-
-        /*for (int i = 0; i < data.getIntExtra(WORD_COUNT, 0); i++) {
-            words.add(new WordData(
-                    data.getStringExtra(WORD_ + i),
-                    data.getStringExtra(MEANING_ + i),
-                    data.getStringExtra(IMAGE_ + i),
-                    data.getLongExtra(DICTIONARY_ID, 0)
-            ));
-            //TODO: Get image
-        }
-*/
         return words;
     }
 }

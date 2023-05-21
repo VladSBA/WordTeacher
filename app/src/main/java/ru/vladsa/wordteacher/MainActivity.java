@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(LOG_TAG, "MainActivity has been created");
 
-//        startActivity(new Intent(MainActivity.this, TestActivity.class));
 
     }
 
@@ -138,16 +137,6 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(WORD_COUNT, wordList.size());
 
         intent.putExtra(WORDS, (ArrayList<WordData>) wordList);
-
-        /*for (int i = 0; i < wordList.size(); i++) {
-            WordData word = wordList.get(i);
-
-            intent.putExtra(WORD_ + i, word.getWord());
-            intent.putExtra(MEANING_ + i, word.getMeaning());
-            intent.putExtra(IMAGE_ + i, word.getImage());
-            intent.putExtra(ID_ + i, word.getId());
-            //TODO: Transfer image
-        }*/
 
     }
 

@@ -41,7 +41,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
     private LinkedList<WordData> words;
     private boolean isNewDictionary;
     private long dictionaryId;
-    private int lastPosition = -1;
     private Uri selectedImage;
 
     private static final String LOG_TAG = MainActivity.LOG_TAG + " (DEActivity)";
@@ -53,7 +52,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
         @Override
         public void onLongClicked(int position) {
-
+            //TODO: Menu
         }
 
         @Override
@@ -101,19 +100,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
         LinkedList<WordData> words = new LinkedList<>();
         words.addAll((ArrayList<WordData>) data.getSerializableExtra(WORDS));
 
-        /*int word_count = data.getIntExtra(WORD_COUNT, 0);
-
-        for (int i = 0; i < word_count; i++) {
-            words.add(new WordData(
-                    data.getStringExtra(WORD_ + i),
-                    data.getStringExtra(MEANING_ + i),
-                    data.getStringExtra(IMAGE_ + i),
-                    data.getLongExtra(DICTIONARY_ID, 0)
-            ));
-            words.get(i).setId(data.getLongExtra(ID_, 0));
-            //TODO: Get image
-        }*/
-
         return words;
     }
 
@@ -133,20 +119,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
             data.putExtra(WORD_COUNT, words.size());
             data.putExtra(DICTIONARY, dictionary);
             data.putExtra(WORDS, words);
-            //TODO: Transfer images
-
-            /*
-            data.putExtra(DICTIONARY_NAME, dictionary.getName());
-            data.putExtra(DICTIONARY_ID, dictionary.getId());
-            data.putExtra(DICTIONARY_VALUE, dictionary.getValue());
-
-            for (int i = 0; i < words.size(); i++) {
-                WordData word = words.get(i);
-                data.putExtra(WORD_ + i, word.getWord());
-                data.putExtra(MEANING_ + i, word.getMeaning());
-                data.putExtra(DICTIONARY_ID + i, dictionary.getId());
-            }*/
-
 
             Log.d(LOG_TAG, "Finishing DictionaryEditActivity...");
 
@@ -186,7 +158,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
             words.add(new WordData("", "", null, dictionary.getId()));
         }
 
-        //TODO: add image
         adapter.setWords(words);
 
         Log.d(LOG_TAG, "Word added");
@@ -211,7 +182,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
                         }
                     }
 
-                    //TODO: Set result
                 }
             }
     );
@@ -266,8 +236,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
         words.add(position, word);
 
         adapter.setWords(words);
-
-        //TODO: Save image
     }
 
     private void getBitmap(int position) {
@@ -281,7 +249,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
         Intent photoPickIntent = new Intent(Intent.ACTION_PICK);
         photoPickIntent.setType("image/*");
-        lastPosition = position;
         pickImageLauncher.launch(photoPickIntent);
 
 

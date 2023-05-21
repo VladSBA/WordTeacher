@@ -72,8 +72,6 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
             words.remove(lastWordPosition);
             words.add(lastWordPosition, word);
-
-            //TODO: Set image (?)
         }
     }
 
@@ -157,8 +155,6 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
             words.remove(position);
             words.add(position, word);
-
-            //TODO: Set image (?)
         }
 
         @Override
@@ -173,10 +169,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
         @Override
         public boolean onLongClick(View v) {
-            //TODO: Handle long click and return "true"
 
             listenerRef.get().onLongClicked(getAdapterPosition());
-            return false;
+            return true;
         }
 
         @Override
