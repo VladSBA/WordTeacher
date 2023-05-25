@@ -1,5 +1,6 @@
 package ru.vladsa.wordteacher;
 
+import static ru.vladsa.wordteacher.MainActivity.DELETED_WORDS;
 import static ru.vladsa.wordteacher.MainActivity.DICTIONARY;
 import static ru.vladsa.wordteacher.MainActivity.DICTIONARY_ID;
 import static ru.vladsa.wordteacher.MainActivity.IS_NEW_DICTIONARY;
@@ -18,7 +19,10 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,12 +42,13 @@ public class DictionaryEditActivity extends AppCompatActivity {
     private DictionaryData dictionary;
 
     private LinkedList<WordData> words;
+    private final ArrayList<WordData> deletedWords = new ArrayList<>();
     private boolean isNewDictionary;
     private long dictionaryId;
 
     private static final String LOG_TAG = MainActivity.LOG_TAG + " (DEActivity)";
 
-    /*private final ItemTouchHelper.SimpleCallback swipeToDelete = new ItemTouchHelper.SimpleCallback(
+    private final ItemTouchHelper.SimpleCallback swipeToDelete = new ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.ACTION_STATE_IDLE,
             ItemTouchHelper.RIGHT
     ) {
@@ -54,14 +59,36 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            adapter.updateWords();
+            words.clear();
+            words.addAll(adapter.getWords());
+
             WordData word = words.get(viewHolder.getAdapterPosition());
+            Log.d(LOG_TAG, String.format("Deleting word %s...", word));
             word.setState(0);
+
             words.remove(viewHolder.getAdapterPosition());
             words.add(viewHolder.getAdapterPosition(), word);
 
+            if (word.getImage() != null && !word.getImage().isEmpty() && !word.getImage().equals(GETTING_IMAGE)) {
+                File file = new File(word.getImage());
+                if (file.delete()) {
+                    Log.d(LOG_TAG, "Image has deleted");
+                } else {
+                    Log.d(LOG_TAG, "Image has not deleted");
+                }
+
+                word.setImage(null);
+            }
+
+            deletedWords.add(word);
+
+            adapter.clearLastWord();
             adapter.removeItemByPosition(viewHolder.getAdapterPosition());
+
+            Log.d(LOG_TAG, "Word deleted");
         }
-    };*/
+    };
 
     private final WordAdapter.Listener listener = new WordAdapter.Listener() {
         @Override
@@ -107,7 +134,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
         binding.name.setText(dictionary.getName());
 
-//        new ItemTouchHelper(swipeToDelete).attachToRecyclerView(binding.container);
+        new ItemTouchHelper(swipeToDelete).attachToRecyclerView(binding.container);
         //TODO: Delete word
 
         adapter.setWords(words);
@@ -141,6 +168,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
             data.putExtra(WORD_COUNT, words.size());
             data.putExtra(DICTIONARY, dictionary);
             data.putExtra(WORDS, words);
+            data.putExtra(DELETED_WORDS, deletedWords);
 
             Log.d(LOG_TAG, "Finishing DictionaryEditActivity...");
 

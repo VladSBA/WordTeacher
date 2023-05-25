@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String DICTIONARY_ID = "Dictionary_id";
     public static final String DICTIONARY = "Dictionary";
     public static final String WORDS = "Words";
+    public static final String DELETED_WORDS = "Deleted_words";
     public static final String IS_NEW_DICTIONARY = "Is_new_dict";
 
     public static final String LOG_TAG = "Log_debug_1";
@@ -78,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         adapter.setData(dictionaryRepository.getDictionaries());
 
         Log.d(LOG_TAG, "MainActivity has been created");
-
 
     }
 
@@ -150,35 +150,23 @@ public class MainActivity extends AppCompatActivity {
                     if (data != null) {
                         boolean isNewDictionary = data.getBooleanExtra(IS_NEW_DICTIONARY, false);
 
-                        /*DictionaryData dictionary = new DictionaryData(
-                          data.getStringExtra(DICTIONARY_NAME),
-                          data.getLongExtra(WORD_COUNT, 0),
-                          data.getBooleanExtra(DICTIONARY_VALUE, false)
-                        );*/
-
                         DictionaryData dictionary = (DictionaryData) data.getSerializableExtra(DICTIONARY);
                         List<WordData> words = (ArrayList<WordData>) data.getSerializableExtra(WORDS);
+                        List<WordData> deletedWords = (ArrayList<WordData>) data.getSerializableExtra(DELETED_WORDS);
 
                         for (WordData word :words) {
                             if (wordRepository.getWordsFromId(word.getId()).size() == 0) {
                                 wordRepository.addWord(word);
-                            } else if (word.getState() == 0) {
-                                wordRepository.removeByPosition(word);
                             } else {
                                 wordRepository.updateWord(word);
                             }
                         }
 
-
-                        /*for (int i = 0; i < data.getIntExtra(WORD_COUNT, 0); i++) {
-                            WordData word = new WordData(
-                                    data.getStringExtra(WORD_ + i),
-                                    data.getStringExtra(MEANING_ + i),
-                                    data.getStringExtra(IMAGE_ + i),
-                                    data.getLongExtra(DICTIONARY_ID, 0)
-                            );
-                            wordRepository.addWord(word);
-                        }*/
+                        for (WordData word: deletedWords) {
+                            if (word != null && wordRepository.getWordsFromId(word.getId()).size() > 0) {
+                                wordRepository.removeByPosition(word);
+                            }
+                        }
 
                         if (isNewDictionary) {
                             dictionaryRepository.addDictionary(dictionary);

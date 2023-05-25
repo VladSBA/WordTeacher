@@ -50,10 +50,6 @@ public class WordData implements Serializable {
         return dictionaryID;
     }
 
-    public void setDictionaryID(long dictionaryID) {
-        this.dictionaryID = dictionaryID;
-    }
-
     public long getId() {
         return id;
     }
@@ -90,7 +86,7 @@ public class WordData implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WordData that = (WordData) o;
-        return image.equals(that.image) && Objects.equals(word, that.word) && Objects.equals(meaning, that.meaning);
+        return Objects.equals(image, that.image) && Objects.equals(word, that.word) && Objects.equals(meaning, that.meaning);
     }
 
     @Override

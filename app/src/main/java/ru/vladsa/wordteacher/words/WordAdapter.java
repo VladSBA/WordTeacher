@@ -105,14 +105,19 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
     public void removeItemByPosition(int position) {
         words.remove(position);
+/*
+
+        if (lastWordPosition != -1) {
+            lastWordPosition--;
+        }
+*/
+
         notifyItemRemoved(position);
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-            View.OnLongClickListener,
-            View.OnFocusChangeListener,
-            TextWatcher {
+    public static class ViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener, View.OnLongClickListener, View.OnFocusChangeListener, TextWatcher {
         private final ItemWordBinding wordBinding;
         private final WeakReference<Listener> listenerRef;
 
