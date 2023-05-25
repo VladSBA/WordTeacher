@@ -21,7 +21,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,7 +40,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
     private LinkedList<WordData> words;
     private boolean isNewDictionary;
     private long dictionaryId;
-    private Uri selectedImage;
 
     private static final String LOG_TAG = MainActivity.LOG_TAG + " (DEActivity)";
 
@@ -176,6 +174,11 @@ public class DictionaryEditActivity extends AppCompatActivity {
     }
 
     private void addWord() {
+        Log.d(LOG_TAG, "Adding word...");
+        adapter.updateWords();
+        words.clear();
+        words.addAll(adapter.getWords());
+
         if (isNewDictionary) {
             words.add(new WordData("", "", null, dictionaryId, 1));
         } else {
@@ -184,7 +187,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
         adapter.setWords(words);
 
-        Log.d(LOG_TAG, "Word added");
+        Log.d(LOG_TAG, String.format("Word added to %s", words));
 
     }
 
@@ -196,7 +199,10 @@ public class DictionaryEditActivity extends AppCompatActivity {
                     Log.d(LOG_TAG, "Picking image...");
                     Bitmap bitmap;
                     if (result.getResultCode() == RESULT_OK) {
-                        selectedImage = result.getData().getData();
+                        Uri selectedImage = null;
+                        if (result.getData() != null) {
+                            selectedImage = result.getData().getData();
+                        }
                         try {
                             bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
 
@@ -238,7 +244,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
                 File dir = getDir(IMAGE_DIR, MODE_PRIVATE);
                 File file = new File(dir.getAbsoluteFile() + "/" + name);
 
-                FileInputStream fis = null;
                 try {
                     fos = new FileOutputStream(file);
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);

@@ -64,6 +64,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
     }
 
     public void updateWords() {
+        Log.d(LOG_TAG, String.format("Updating words %s at LWP = %d...", words, lastWordPosition));
         if (lastWordPosition != -1 && lastWordBinding != null) {
             WordData word = words.get(lastWordPosition);
 
@@ -73,6 +74,8 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
             words.remove(lastWordPosition);
             words.add(lastWordPosition, word);
         }
+
+        Log.d(LOG_TAG, String.format("Updated words: %s", words));
     }
 
     public void setWords(List<WordData> newData) {
@@ -83,12 +86,13 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
     }
 
     public List<WordData> getWords() {
+        Log.d(LOG_TAG, String.format("Getting words: %s", words));
         return words;
     }
 
     @Override
     public void onBindViewHolder(@NonNull WordAdapter.ViewHolder holder, int position) {
-        Log.d(LOG_TAG, "Binding...");
+        Log.d(LOG_TAG, String.format("Binding... at %s from %s ap position %d", words.get(position), words, position));
         holder.bind(words.get(position));
 
     }
@@ -116,7 +120,6 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
             super(itemView);
             wordBinding = ItemWordBinding.bind(itemView);
             listenerRef = new WeakReference<>(listener);
-            lastWordBinding = wordBinding;
 
             itemView.setOnClickListener(this);
             wordBinding.word.setOnClickListener(this);
@@ -147,16 +150,44 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
         }
 
-        private void setWords() {
+        private void updateWords(boolean hasFocus) {
+            Log.d(LOG_TAG, String.format("Updating words %s, at position %d, LWP = %d", words, getAdapterPosition(), lastWordPosition));
+
+            if (lastWordPosition != -1 && lastWordBinding != null) {
+                WordData word = words.get(lastWordPosition);
+
+                word.setWord(lastWordBinding.word.getText().toString());
+                word.setMeaning(lastWordBinding.meaning.getText().toString());
+
+                words.remove(lastWordPosition);
+                words.add(lastWordPosition, word);
+
+                lastWordPosition = -1;
+                lastWordBinding = null;
+            }
+
             int position = getAdapterPosition();
-            lastWordPosition = position;
-            WordData word = words.get(position);
 
-            word.setWord(wordBinding.word.getText().toString());
-            word.setMeaning(wordBinding.meaning.getText().toString());
+            if (position >= 0) {
+                if (hasFocus) {
+                    lastWordPosition = position;
+                    lastWordBinding = wordBinding;
+                }
 
-            words.remove(position);
-            words.add(position, word);
+                WordData word = words.get(position);
+
+                word.setWord(wordBinding.word.getText().toString());
+                word.setMeaning(wordBinding.meaning.getText().toString());
+
+                words.remove(position);
+                words.add(position, word);
+            }
+
+            Log.d(LOG_TAG, String.format("Updated words %s, at position %d, LWP = %d", words, getAdapterPosition(), lastWordPosition));
+        }
+
+        private void updateWords() {
+            updateWords(false);
         }
 
         @Override
@@ -178,22 +209,23 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            setWords();
+            updateWords(hasFocus);
+
         }
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            setWords();
+            updateWords();
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            setWords();
+            updateWords();
         }
 
         @Override
         public void afterTextChanged(Editable s) {
-            setWords();
+            updateWords();
         }
     }
 }
