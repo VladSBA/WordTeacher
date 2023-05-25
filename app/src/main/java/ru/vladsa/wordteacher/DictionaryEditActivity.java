@@ -220,8 +220,10 @@ public class DictionaryEditActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "Saving bitmap...");
         int position = -1;
 
+        //TODO: Saving image in other thread
         for (int i = 0; i < words.size(); i++) {
-            if (words.get(i).getImage().equals(GETTING_IMAGE)) {
+            String path = words.get(i).getImage();
+            if (path != null && path.equals(GETTING_IMAGE)) {
                 position = i;
             }
         }

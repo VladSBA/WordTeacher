@@ -33,6 +33,8 @@
         app:layout_constraintBottom_toTopOf="@id/image"
         tools:text="@tools:sample/first_names" />
 
+    <!--TODO Beautiful imageView-->
+
     <ImageButton
         android:id="@+id/image"
         android:layout_width="0dp"
