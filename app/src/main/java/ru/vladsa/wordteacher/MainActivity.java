@@ -160,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(IS_NEW_DICTIONARY, true);
 
         intent.putExtra(DICTIONARY_ID, lastDictionaryId + 1);
-        //TODO: Save last id
 
         intent.putExtra(WORDS, new ArrayList<WordData>());
 
