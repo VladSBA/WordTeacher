@@ -97,6 +97,9 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
         @Override
         public void onLongClicked(int position) {
+            Log.d(LOG_TAG, "Setting position " + position);
+            adapter.setPosition(position);
+
             //TODO: Menu
         }
 
@@ -138,6 +141,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
         adapter.setWords(words);
         binding.container.setAdapter(adapter);
 
+        registerForContextMenu(binding.container);
 
         Log.d(LOG_TAG, "DictionaryEditActivity has been created");
 

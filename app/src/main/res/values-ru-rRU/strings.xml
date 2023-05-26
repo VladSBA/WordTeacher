@@ -19,4 +19,5 @@
     <string name="add_dictionary">Добавить словарь</string>
     <string name="no_dictionary_selected">Ни один словарь не выбран</string>
     <string name="delete_image">Удалить изображение</string>
+    <string name="delete">Удалить</string>
 </resources>

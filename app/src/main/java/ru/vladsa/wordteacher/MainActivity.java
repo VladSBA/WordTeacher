@@ -3,7 +3,9 @@ package ru.vladsa.wordteacher;
 import static ru.vladsa.wordteacher.DictionaryEditActivity.GETTING_IMAGE;
 import static ru.vladsa.wordteacher.dictionaries.DictionaryAdapter.ID_DELETE;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -36,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
     public static final String IS_NEW_DICTIONARY = "Is_new_dict";
 
     public static final String LOG_TAG = "Log_debug_1";
+
+    private SharedPreferences preferences;
+    private final String APP_PREFERENCES = "app_preferences";
+    private final String LAST_DICTIONARY_ID = "last_dictionary_id";
+    private long lastDictionaryId;
 
     private ActivityMainBinding binding;
 
@@ -88,12 +95,15 @@ public class MainActivity extends AppCompatActivity {
 
         registerForContextMenu(binding.container);
 
+        preferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        lastDictionaryId = preferences.getLong(LAST_DICTIONARY_ID, 0);
+
         Log.d(LOG_TAG, "MainActivity has been created");
     }
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        int position = -1;
+        int position;
 
         try {
             position = adapter.getPosition();
@@ -148,7 +158,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "Adding dictionary...");
         Intent intent = new Intent(MainActivity.this, DictionaryEditActivity.class);
         intent.putExtra(IS_NEW_DICTIONARY, true);
-        intent.putExtra(DICTIONARY_ID, Long.valueOf(dictionaryRepository.getAllDictionariesCount() + 1));
+
+        intent.putExtra(DICTIONARY_ID, lastDictionaryId + 1);
+        //TODO: Save last id
+
         intent.putExtra(WORDS, new ArrayList<WordData>());
 
         activityDictionaryEditLauncher.launch(intent);
@@ -204,11 +217,41 @@ public class MainActivity extends AppCompatActivity {
                     Intent data = result.getData();
 
                     if (data != null) {
+                        Log.d(LOG_TAG, "Getting data...");
+
                         boolean isNewDictionary = data.getBooleanExtra(IS_NEW_DICTIONARY, false);
 
                         DictionaryData dictionary = (DictionaryData) data.getSerializableExtra(DICTIONARY);
                         List<WordData> words = (ArrayList<WordData>) data.getSerializableExtra(WORDS);
                         List<WordData> deletedWords = (ArrayList<WordData>) data.getSerializableExtra(DELETED_WORDS);
+
+                        if (isNewDictionary) {
+                            Log.d(LOG_TAG, "Dictionary adding...");
+
+                            dictionaryRepository.addDictionary(dictionary);
+
+                            lastDictionaryId = preferences.getLong(LAST_DICTIONARY_ID, 0);
+                            lastDictionaryId++;
+
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putLong(LAST_DICTIONARY_ID, lastDictionaryId);
+                            editor.apply();
+
+                            Log.d(LOG_TAG, "Dictionary has added. LDI = " + lastDictionaryId);
+                        } else {
+                            dictionaryRepository.updateDictionary(dictionary);
+                            Log.d(LOG_TAG, "Dictionary has updated.");
+                        }
+
+                        Log.d(LOG_TAG, String.format("Deleting words %s...", deletedWords));
+
+                        for (WordData word: deletedWords) {
+                            if (word != null && wordRepository.getWordsFromId(word.getId()).size() > 0) {
+                                wordRepository.removeByPosition(word);
+                            }
+                        }
+
+                        Log.d(LOG_TAG, String.format("Getting words %s...", words));
 
                         for (WordData word :words) {
                             if (wordRepository.getWordsFromId(word.getId()).size() == 0) {
@@ -218,21 +261,12 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
 
-                        for (WordData word: deletedWords) {
-                            if (word != null && wordRepository.getWordsFromId(word.getId()).size() > 0) {
-                                wordRepository.removeByPosition(word);
-                            }
-                        }
-
-                        if (isNewDictionary) {
-                            dictionaryRepository.addDictionary(dictionary);
-                        } else {
-                            dictionaryRepository.updateDictionary(dictionary);
-                        }
-
                         adapter.setData(dictionaryRepository.getDictionaries());
 
                     }
+
+                    Log.d(LOG_TAG, "Data received.");
+
                 }
             });
 

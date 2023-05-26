@@ -4,10 +4,10 @@ import static ru.vladsa.wordteacher.DictionaryEditActivity.GETTING_IMAGE;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,13 +21,22 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ru.vladsa.wordteacher.MainActivity;
+import ru.vladsa.wordteacher.R;
 import ru.vladsa.wordteacher.databinding.ItemWordBinding;
 
 public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
+    private static final String LOG_TAG = MainActivity.LOG_TAG + " (WordAdapter)";
+    public static final int ID_DELETE_IMAGE = 1;
+    public static final int ID_DELETE = 2;
+
     private static ItemWordBinding lastWordBinding;
     private static int lastWordPosition = -1;
 
-    private static final String LOG_TAG = MainActivity.LOG_TAG + " (WordAdapter)";
+    private int position;
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     public interface Listener {
 
@@ -105,19 +114,13 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
     public void removeItemByPosition(int position) {
         words.remove(position);
-/*
-
-        if (lastWordPosition != -1) {
-            lastWordPosition--;
-        }
-*/
 
         notifyItemRemoved(position);
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener, View.OnLongClickListener, View.OnFocusChangeListener, TextWatcher {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements
+            View.OnClickListener, View.OnLongClickListener, View.OnFocusChangeListener, View.OnCreateContextMenuListener {
         private final ItemWordBinding wordBinding;
         private final WeakReference<Listener> listenerRef;
 
@@ -133,6 +136,8 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
             wordBinding.word.setOnFocusChangeListener(this);
             wordBinding.meaning.setOnFocusChangeListener(this);
+
+            itemView.setOnCreateContextMenuListener(this);
 
         }
 
@@ -191,10 +196,6 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
             Log.d(LOG_TAG, String.format("Updated words %s, at position %d, LWP = %d", words, getAdapterPosition(), lastWordPosition));
         }
 
-        private void updateWords() {
-            updateWords(false);
-        }
-
         @Override
         public void onClick(View v) {
             if (v.getId() == wordBinding.image.getId()) {
@@ -219,18 +220,10 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
         }
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            updateWords();
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            updateWords();
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            updateWords();
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            Log.d(LOG_TAG, "Creating context menu at position " + getAdapterPosition());
+            menu.add(Menu.NONE, ID_DELETE_IMAGE, Menu.NONE, R.string.delete_image);
+            menu.add(Menu.NONE, ID_DELETE, Menu.NONE, R.string.delete);
         }
     }
 }

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.vladsa.wordteacher.MainActivity;
+import ru.vladsa.wordteacher.R;
 import ru.vladsa.wordteacher.databinding.ItemDictionaryBinding;
 
 public class DictionaryAdapter extends RecyclerView.Adapter<DictionaryAdapter.ViewHolder> {
@@ -97,13 +98,13 @@ public class DictionaryAdapter extends RecyclerView.Adapter<DictionaryAdapter.Vi
         public ViewHolder(@NonNull View itemView, Listener listener) {
             super(itemView);
             dictionaryBinding = ItemDictionaryBinding.bind(itemView);
+            listenerRef = new WeakReference<>(listener);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
             itemView.setOnCreateContextMenuListener(this);
             dictionaryBinding.value.setOnCheckedChangeListener(this);
 
-            listenerRef = new WeakReference<>(listener);
         }
 
         public void bind(DictionaryData data) {
@@ -148,7 +149,7 @@ public class DictionaryAdapter extends RecyclerView.Adapter<DictionaryAdapter.Vi
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             Log.d(LOG_TAG, "Creating context menu at position " + getAdapterPosition());
-            menu.add(Menu.NONE, ID_DELETE, Menu.NONE, "Delete");
+            menu.add(Menu.NONE, ID_DELETE, Menu.NONE, R.string.delete);
 
         }
     }
