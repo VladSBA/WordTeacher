@@ -38,6 +38,10 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
         this.position = position;
     }
 
+    public int getPosition() {
+        return position;
+    }
+
     public interface Listener {
 
         void onPositionClicked(int position);
@@ -138,6 +142,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
             wordBinding.meaning.setOnFocusChangeListener(this);
 
             itemView.setOnCreateContextMenuListener(this);
+            wordBinding.image.setOnCreateContextMenuListener(this);
 
         }
 
@@ -156,6 +161,8 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
                 }
 
                 wordBinding.image.setImageBitmap(bitmap);
+            } else {
+                wordBinding.image.setImageDrawable(null);
             }
 
         }
@@ -208,8 +215,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
         @Override
         public boolean onLongClick(View v) {
-
+            Log.d(LOG_TAG, "LongClick at position " + getAdapterPosition());
             listenerRef.get().onLongClicked(getAdapterPosition());
+
             return true;
         }
 
@@ -221,9 +229,12 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            Log.d(LOG_TAG, "Creating context menu at position " + getAdapterPosition());
-            menu.add(Menu.NONE, ID_DELETE_IMAGE, Menu.NONE, R.string.delete_image);
-            menu.add(Menu.NONE, ID_DELETE, Menu.NONE, R.string.delete);
+            if (v.getId() == itemView.getId()) {
+                Log.d(LOG_TAG, "Creating context menu at position " + getAdapterPosition());
+                menu.add(Menu.NONE, ID_DELETE_IMAGE, Menu.NONE, R.string.delete_image);
+                menu.add(Menu.NONE, ID_DELETE, Menu.NONE, R.string.delete);
+            }
+
         }
     }
 }

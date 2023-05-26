@@ -6,6 +6,8 @@ import static ru.vladsa.wordteacher.MainActivity.DICTIONARY_ID;
 import static ru.vladsa.wordteacher.MainActivity.IS_NEW_DICTIONARY;
 import static ru.vladsa.wordteacher.MainActivity.WORDS;
 import static ru.vladsa.wordteacher.MainActivity.WORD_COUNT;
+import static ru.vladsa.wordteacher.words.WordAdapter.ID_DELETE;
+import static ru.vladsa.wordteacher.words.WordAdapter.ID_DELETE_IMAGE;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -59,33 +62,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            adapter.updateWords();
-            words.clear();
-            words.addAll(adapter.getWords());
-
-            WordData word = words.get(viewHolder.getAdapterPosition());
-            Log.d(LOG_TAG, String.format("Deleting word %s...", word));
-
-            words.remove(viewHolder.getAdapterPosition());
-            words.add(viewHolder.getAdapterPosition(), word);
-
-            if (word.getImage() != null && !word.getImage().isEmpty() && !word.getImage().equals(GETTING_IMAGE)) {
-                File file = new File(word.getImage());
-                if (file.delete()) {
-                    Log.d(LOG_TAG, "Image has deleted");
-                } else {
-                    Log.d(LOG_TAG, "Image has not deleted");
-                }
-
-                word.setImage(null);
-            }
-
-            deletedWords.add(word);
-
-            adapter.clearLastWord();
-            adapter.removeItemByPosition(viewHolder.getAdapterPosition());
-
-            Log.d(LOG_TAG, "Word deleted");
+            deleteWord(viewHolder.getAdapterPosition());
         }
     };
 
@@ -145,6 +122,84 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
         Log.d(LOG_TAG, "DictionaryEditActivity has been created");
 
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int position;
+
+        try {
+            position = adapter.getPosition();
+        } catch (Exception e) {
+            Log.d(LOG_TAG, e.getLocalizedMessage(), e);
+            return super.onContextItemSelected(item);
+        }
+
+        switch (item.getItemId()) {
+            case ID_DELETE:
+                deleteWord(position);
+                break;
+            case ID_DELETE_IMAGE:
+                deleteImage(position);
+                break;
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
+    private void deleteImage(int position) {
+        WordData word = words.get(position);
+        Log.d(LOG_TAG, "Deleting image from word " + word);
+
+        if (word.getImage() != null && !word.getImage().isEmpty() && !word.getImage().equals(GETTING_IMAGE)) {
+            File file = new File(word.getImage());
+            if (file.delete()) {
+                Log.d(LOG_TAG, "Image has deleted");
+            } else {
+                Log.d(LOG_TAG, "Image has not deleted");
+            }
+
+            word.setImage(null);
+        }
+
+        adapter.clearLastWord();
+
+        words.remove(position);
+        words.add(position, word);
+
+        adapter.setWords(words);
+
+        Log.d(LOG_TAG, "Image deleted");
+    }
+
+    private void deleteWord(int position) {
+        adapter.updateWords();
+        words.clear();
+        words.addAll(adapter.getWords());
+
+        WordData word = words.get(position);
+        Log.d(LOG_TAG, String.format("Deleting word %s...", word));
+
+        if (word.getImage() != null && !word.getImage().isEmpty() && !word.getImage().equals(GETTING_IMAGE)) {
+            File file = new File(word.getImage());
+            if (file.delete()) {
+                Log.d(LOG_TAG, "Image has deleted");
+            } else {
+                Log.d(LOG_TAG, "Image has not deleted");
+            }
+
+            word.setImage(null);
+        }
+
+        words.remove(position);
+        words.add(position, word);
+
+        deletedWords.add(word);
+
+        adapter.clearLastWord();
+        adapter.removeItemByPosition(position);
+
+        Log.d(LOG_TAG, "Word deleted");
     }
 
     private LinkedList<WordData> getWordsFromExtra(Intent data) {
