@@ -1,16 +1,22 @@
 package ru.vladsa.wordteacher;
 
+import static ru.vladsa.wordteacher.DictionaryEditActivity.GETTING_IMAGE;
+import static ru.vladsa.wordteacher.dictionaries.DictionaryAdapter.ID_DELETE;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +60,9 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onLongClicked(int position) {
-            //TODO: Menu
+            Log.d(LOG_TAG, "Setting position " + position);
+            adapter.setPosition(position);
+
         }
     };
 
@@ -78,8 +86,56 @@ public class MainActivity extends AppCompatActivity {
 
         adapter.setData(dictionaryRepository.getDictionaries());
 
-        Log.d(LOG_TAG, "MainActivity has been created");
+        registerForContextMenu(binding.container);
 
+        Log.d(LOG_TAG, "MainActivity has been created");
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int position = -1;
+
+        try {
+            position = adapter.getPosition();
+        } catch (Exception e) {
+            Log.d(LOG_TAG, e.getLocalizedMessage(), e);
+            return super.onContextItemSelected(item);
+        }
+
+        if (item.getItemId() == ID_DELETE) {
+            deleteDictionary(dictionaryRepository.getDictionaries().get(position));
+
+            adapter.removeItemByPosition(position);
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
+    private void deleteDictionary(DictionaryData dictionary) {
+        Log.d(LOG_TAG, String.format("Deleting dictionary %s...", dictionary));
+
+        ArrayList<WordData> words = (ArrayList<WordData>) wordRepository.getDictionaryWords(dictionary.getId());
+
+        for (WordData word :words) {
+            Log.d(LOG_TAG, String.format("Deleting word %s...", word));
+
+            if (word.getImage() != null && !word.getImage().isEmpty() && !word.getImage().equals(GETTING_IMAGE)) {
+                Log.d(LOG_TAG, "Deleting image...");
+                File file = new File(word.getImage());
+
+                if (file.delete()) {
+                    Log.d(LOG_TAG, "Image has deleted");
+                } else {
+                    Log.d(LOG_TAG, "Image has not deleted");
+                }
+            }
+
+            wordRepository.removeByPosition(word);
+        }
+
+        dictionaryRepository.removeByPosition(dictionary);
+
+        Log.d(LOG_TAG, "Dictionary has deleted.");
     }
 
     public int getWordCount(long dictionaryID) {

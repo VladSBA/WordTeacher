@@ -81,7 +81,6 @@ public class LearningActivity extends AppCompatActivity {
         binding.word.setText(displayedWord.getWord());
         binding.meaning.setText(displayedWord.getMeaning());
         binding.image.setImageBitmap(getImage(displayedWord.getImage()));
-        //TODO: Set image
 
         binding.image.setVisibility(View.GONE);
         binding.meaningAnnotation.setVisibility(View.GONE);

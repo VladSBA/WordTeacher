@@ -18,4 +18,5 @@
     <string name="add_dictionary">Add dictionary</string>
     <string name="no_dictionary_selected">No dictionary selected</string>
     <string name="delete_image">Delete image</string>
+    <string name="delete">Delete</string>
 </resources>

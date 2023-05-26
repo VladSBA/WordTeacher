@@ -23,7 +23,6 @@ public class WordDataBaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_MEANING = "meaning";
     private static final String COLUMN_IMAGE = "image";
     private static final String COLUMN_DICTIONARY = "dictionary";
-    private static final String COLUMN_STATE = "state";
 
 
     private static final long NUM_COLUMN_ID = 0;
@@ -31,7 +30,6 @@ public class WordDataBaseHelper extends SQLiteOpenHelper {
     private static final int NUM_COLUMN_MEANING = 2;
     private static final int NUM_COLUMN_IMAGE = 3;
     private static final int NUM_COLUMN_DICTIONARY = 4;
-    private static final int NUM_COLUMN_STATE = 5;
 
     SQLiteDatabase database;
 
@@ -46,7 +44,6 @@ public class WordDataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_WORD, data.getWord());
         cv.put(COLUMN_MEANING, data.getMeaning());
         cv.put(COLUMN_DICTIONARY, data.getDictionaryID());
-        cv.put(COLUMN_STATE, data.getState());
         database.insert(TABLE_NAME, null, cv);
     }
 
@@ -67,8 +64,7 @@ public class WordDataBaseHelper extends SQLiteOpenHelper {
                     cursor.getString(NUM_COLUMN_WORD),
                     cursor.getString(NUM_COLUMN_MEANING),
                     cursor.getString(NUM_COLUMN_IMAGE),
-                    cursor.getLong(NUM_COLUMN_DICTIONARY),
-                    cursor.getInt(NUM_COLUMN_STATE)
+                    cursor.getLong(NUM_COLUMN_DICTIONARY)
             ));
         } while (cursor.moveToNext());
         cursor.close();
@@ -83,8 +79,7 @@ public class WordDataBaseHelper extends SQLiteOpenHelper {
                 COLUMN_WORD + " TEXT, " +
                 COLUMN_MEANING + " TEXT, " +
                 COLUMN_IMAGE + " TEXT, " +
-                COLUMN_DICTIONARY + " INTEGER, " +
-                COLUMN_STATE + " INTEGER); ";
+                COLUMN_DICTIONARY + " INTEGER); ";
         db.execSQL(query);
 
     }
@@ -107,7 +102,6 @@ public class WordDataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_MEANING, data.getMeaning());
         cv.put(COLUMN_IMAGE, data.getImage());
         cv.put(COLUMN_DICTIONARY, data.getDictionaryID());
-        cv.put(COLUMN_STATE, data.getState());
         database.update(TABLE_NAME, cv, COLUMN_ID + " = ?", new String[]{String.valueOf(data.getId())});
     }
 

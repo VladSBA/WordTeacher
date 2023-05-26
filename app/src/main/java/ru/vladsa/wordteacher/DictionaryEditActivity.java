@@ -65,7 +65,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
             WordData word = words.get(viewHolder.getAdapterPosition());
             Log.d(LOG_TAG, String.format("Deleting word %s...", word));
-            word.setState(0);
 
             words.remove(viewHolder.getAdapterPosition());
             words.add(viewHolder.getAdapterPosition(), word);
@@ -135,7 +134,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
         binding.name.setText(dictionary.getName());
 
         new ItemTouchHelper(swipeToDelete).attachToRecyclerView(binding.container);
-        //TODO: Delete word
 
         adapter.setWords(words);
         binding.container.setAdapter(adapter);
@@ -208,9 +206,9 @@ public class DictionaryEditActivity extends AppCompatActivity {
         words.addAll(adapter.getWords());
 
         if (isNewDictionary) {
-            words.add(new WordData("", "", null, dictionaryId, 1));
+            words.add(new WordData("", "", null, dictionaryId));
         } else {
-            words.add(new WordData("", "", null, dictionary.getId(), 1));
+            words.add(new WordData("", "", null, dictionary.getId()));
         }
 
         adapter.setWords(words);
