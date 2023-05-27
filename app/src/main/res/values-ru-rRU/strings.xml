@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Word Teacher</string>
     <string name="Start">Начать</string>
     <string name="dictionary_name">Имя словаря</string>
     <string name="word">Слово</string>
@@ -20,4 +19,12 @@
     <string name="no_dictionary_selected">Ни один словарь не выбран</string>
     <string name="delete_image">Удалить изображение</string>
     <string name="delete">Удалить</string>
+    <string name="settings">Настройки</string>
+    <string name="import_dictionary">Импортировать словарь</string>
+    <string name="learning">Обучение</string>
+    <string name="absolute_time">"Абсолютное время: "</string>
+    <string name="relative_time">"Относительное время: "</string>
+    <string name="timer">Таймер</string>
+    <string name="wrong_word_move">Сдвиг неправильного слова</string>
+    <string name="right_words_to_memorization">Правильных слов для запоминания</string>
 </resources>
