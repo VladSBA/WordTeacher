@@ -2,8 +2,13 @@ package ru.vladsa.wordteacher;
 
 import static ru.vladsa.wordteacher.DictionaryEditActivity.GETTING_IMAGE;
 import static ru.vladsa.wordteacher.MainActivity.WORDS;
+import static ru.vladsa.wordteacher.SettingsActivity.APP_PREFERENCES;
+import static ru.vladsa.wordteacher.SettingsActivity.RIGHT_WORDS_TO_MEMORIZED_KEY;
+import static ru.vladsa.wordteacher.SettingsActivity.WRONG_WORD_MOVE_KEY;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -27,9 +32,6 @@ public class LearningActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = MainActivity.LOG_TAG + " (LearningActivity)";
 
-    public static final String MAX_RIGHT_WORDS = "MRW";
-    public static final String WRONG_WORD_SHIFT = "WWS";
-
     private LinkedList<WordData> wordList = new LinkedList<>();
     private HashMap<WordData, Integer> wordMap = new HashMap<>();
     private final TreeSet<Integer> tempID = new TreeSet<>();
@@ -43,6 +45,8 @@ public class LearningActivity extends AppCompatActivity {
 
     private ActivityLearningBinding binding;
 
+    private SharedPreferences preferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(LOG_TAG, "Creating LearningActivity...");
@@ -50,11 +54,14 @@ public class LearningActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLearningBinding.inflate(getLayoutInflater());
 
+        preferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+
+        maxRightWords = preferences.getInt(RIGHT_WORDS_TO_MEMORIZED_KEY, 2) - 1;
+        wrongWordShift = preferences.getInt(WRONG_WORD_MOVE_KEY, 1);
+
         Intent intent = getIntent();
         wordList = getWordsFromExtra(intent);
         wordMap = getWordsFromList(wordList, 0);
-        maxRightWords = intent.getIntExtra(MAX_RIGHT_WORDS, 2) - 1;
-        wrongWordShift = intent.getIntExtra(WRONG_WORD_SHIFT, 2);
 
         if (wordList.isEmpty()) {
             Log.d(LOG_TAG, "Word list empty. Finishing activity...");

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    tools:context=".SettingsActivity">
+
+    <TextView
+        android:id="@+id/timer_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/timer"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/timer_switch"
+        app:layout_constraintTop_toTopOf="@id/timer_switch"
+        app:layout_constraintBottom_toBottomOf="@id/timer_switch"/>
+
+    <Switch
+        android:id="@+id/timer_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        app:layout_constraintStart_toEndOf="@id/timer_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/word_move_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/wrong_word_move"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/word_move_value"
+        app:layout_constraintTop_toTopOf="@id/word_move_value"
+        app:layout_constraintBottom_toBottomOf="@id/word_move_value"/>
+
+    <EditText
+        android:id="@+id/word_move_value"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/timer_switch"
+        app:layout_constraintStart_toEndOf="@id/word_move_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        android:inputType="number"
+        android:autofillHints="phone"
+        android:maxLength="2"
+        tools:text="11" />
+
+    <TextView
+        android:id="@+id/word_right_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/right_words_to_memorization"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/word_right_value"
+        app:layout_constraintTop_toTopOf="@id/word_right_value"
+        app:layout_constraintBottom_toBottomOf="@id/word_right_value"/>
+
+    <EditText
+        android:id="@+id/word_right_value"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/word_move_value"
+        app:layout_constraintStart_toEndOf="@id/word_right_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        android:inputType="number"
+        android:autofillHints="phone"
+        android:maxLength="2"
+        tools:text="11" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

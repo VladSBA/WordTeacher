@@ -1,6 +1,7 @@
 package ru.vladsa.wordteacher;
 
 import static ru.vladsa.wordteacher.DictionaryEditActivity.GETTING_IMAGE;
+import static ru.vladsa.wordteacher.SettingsActivity.APP_PREFERENCES;
 import static ru.vladsa.wordteacher.dictionaries.DictionaryAdapter.ID_DELETE;
 
 import android.content.Context;
@@ -8,6 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -40,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String LOG_TAG = "Log_debug_1";
 
     private SharedPreferences preferences;
-    private final String APP_PREFERENCES = "app_preferences";
+
     private final String LAST_DICTIONARY_ID = "last_dictionary_id";
     private long lastDictionaryId;
 
@@ -99,6 +102,39 @@ public class MainActivity extends AppCompatActivity {
         lastDictionaryId = preferences.getLong(LAST_DICTIONARY_ID, 0);
 
         Log.d(LOG_TAG, "MainActivity has been created");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = new MenuInflater(this);
+        inflater.inflate(R.menu.menu_main, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.settings) {
+            openSettings();
+        } else if (itemId == R.id.import_dictionary) {
+            importDictionary();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void importDictionary() {
+        //TODO: import dictionary
+    }
+
+    private void openSettings() {
+        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+
+        startActivity(intent);
+
+        Log.d(LOG_TAG, "SettingsActivity was starting...");
     }
 
     @Override
