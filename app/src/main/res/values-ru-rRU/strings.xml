@@ -27,4 +27,5 @@
     <string name="timer">Таймер</string>
     <string name="wrong_word_move">Сдвиг неправильного слова</string>
     <string name="right_words_to_memorization">Правильных слов для запоминания</string>
+    <string name="export">Экспортировать</string>
 </resources>

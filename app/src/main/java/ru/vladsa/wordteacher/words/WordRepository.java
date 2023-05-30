@@ -56,11 +56,11 @@ public class WordRepository {
 
     }
 
-    public void addWords(List<WordData> wordData) {
+    public void addWords(List<WordData> wordDataList) {
         words.clear();
-        roomdb.wordDao().insertAll((WordData[]) wordData.toArray());
+        roomdb.wordDao().insertAll(wordDataList.toArray(new WordData[0]));
         words.addAll(roomdb.wordDao().getAll());
-        words.addAll(wordData);
+        words.addAll(wordDataList);
 
     }
 
