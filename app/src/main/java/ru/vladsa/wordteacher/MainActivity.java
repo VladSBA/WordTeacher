@@ -447,13 +447,13 @@ public class MainActivity extends AppCompatActivity {
                                 if (ois != null) ois.close();
                             }
                         } catch (Exception e) {
-                            throw new RuntimeException(e);
+                            e.printStackTrace();
                         }
 
                         if (dictionary != null) {
                             unpackDictionary(dictionary);
                         } else {
-                            Log.d(LOG_TAG, "File extension is invalid.");
+                            Log.w(LOG_TAG, "File extension is invalid.");
                             //TODO: Error message
                         }
 
