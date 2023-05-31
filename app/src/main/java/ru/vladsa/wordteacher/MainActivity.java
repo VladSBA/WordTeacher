@@ -196,6 +196,39 @@ public class MainActivity extends AppCompatActivity {
         return super.onContextItemSelected(item);
     }
 
+    private void saveDictionaryOld(Dictionary dictionary) {
+        String fileName = dictionary.getName() + ".wtd";
+
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+        File file = new File(dir, fileName);
+
+        if (dir.canWrite()) {
+            try {
+                FileOutputStream fos = null;
+                ObjectOutputStream oos = null;
+
+                try {
+                    fos = new FileOutputStream(file);
+                    oos = new ObjectOutputStream(fos);
+
+                    dictionary.save(oos);
+
+                    exportingDictionary = null;
+
+                    //TODO: Save message
+
+                } finally {
+                    if (fos != null) fos.close();
+                    if (oos != null) oos.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     private void exportDictionary(DictionaryData dictionary, boolean isNewTry) {
         exportingDictionary = dictionary;
 
@@ -210,12 +243,12 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(LOG_TAG, String.format("Exporting dictionary %s...  isNewTry = %b", dict, isNewTry));
 
+        //TODO: Save dictionary in other thread
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             Log.d(LOG_TAG, "New variant.");
 
             String fileName = dictionary.getName() + ".wtd";
-
-            //TODO: Check file created
 
             ContentValues cv = new ContentValues();
             cv.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
@@ -238,6 +271,8 @@ public class MainActivity extends AppCompatActivity {
 
                     exportingDictionary = null;
 
+                    //TODO: Save message
+
                 } finally {
                     if (os != null) os.close();
                     if (oos != null) oos.close();
@@ -254,6 +289,8 @@ public class MainActivity extends AppCompatActivity {
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     Log.d(LOG_TAG, "Old variant.");
 
+                    saveDictionaryOld(dict);
+
                     //TODO: Save file at old version
 
                 } else {
@@ -263,6 +300,8 @@ public class MainActivity extends AppCompatActivity {
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             PERMISSION_REQUEST_CODE);
                 }
+            } else {
+                saveDictionaryOld(dict);
             }
 
         }
@@ -277,6 +316,12 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == PERMISSION_REQUEST_CODE && Objects.equals(permissions[0], Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 exportDictionary(exportingDictionary, false);
+
+                Log.d(LOG_TAG, "Write external permission received.");
+            } else {
+                //TODO: Error message
+
+                Log.d(LOG_TAG, "Write external permission not received.");
             }
         }
 

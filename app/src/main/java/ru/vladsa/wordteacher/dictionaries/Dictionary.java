@@ -31,12 +31,12 @@ public class Dictionary implements Serializable {
         return words.size();
     }
 
-    public void save(ObjectOutputStream os) {
-        Log.d(LOG_TAG, String.format("Saving dictionary %s...", this));
+    public void save(ObjectOutputStream oos) {
+        Log.d(LOG_TAG, String.format("Saving dictionary %s... to %s", this, oos));
 
         try {
-            os.writeObject(this);
-            os.flush();
+            oos.writeObject(this);
+            oos.flush();
 
             Log.d(LOG_TAG, "Dictionary has saved.");
 
@@ -49,11 +49,11 @@ public class Dictionary implements Serializable {
 
     }
 
-    public static Dictionary load(ObjectInputStream is) {
+    public static Dictionary load(ObjectInputStream ois) {
         Log.d(LOG_TAG, "Loading dictionary...");
 
         try {
-            Dictionary dictionary = (Dictionary) is.readObject();
+            Dictionary dictionary = (Dictionary) ois.readObject();
 
             Log.d(LOG_TAG, String.format("Dictionary %s has read.", dictionary));
 
