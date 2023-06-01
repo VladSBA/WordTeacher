@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 67;
 
-    public static final String LOG_TAG = "Log_debug_1";
+    public static final String LOG_TAG = "Log_WT_M";
 
     private SharedPreferences preferences;
 
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    private final DictionaryAdapter adapter = new DictionaryAdapter(listener);
+    private DictionaryAdapter adapter;
 
 
     @Override
@@ -118,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
         wordRepository = WordRepository.getInstance(this);
         dictionaryRepository = DictionaryRepository.getInstance(this);
+
+        adapter = new DictionaryAdapter(listener, this.getString(R.string.word_count));
 
         binding.container.setAdapter(adapter);
 
@@ -159,8 +161,6 @@ public class MainActivity extends AppCompatActivity {
         //TODO: cast type to MIME_TYPE_WTD
 
         dictionaryPickLauncher.launch(dictionaryPickIntent);
-
-        //TODO: import dictionary
     }
 
     private void openSettings() {
@@ -212,11 +212,17 @@ public class MainActivity extends AppCompatActivity {
                     fos = new FileOutputStream(file);
                     oos = new ObjectOutputStream(fos);
 
-                    dictionary.save(oos);
+                    String message;
+
+                    if (dictionary.save(oos)) {
+                        message = String.format(this.getString(R.string.dictionary__name__has_been_saved), dictionary.getName());
+                    } else {
+                        message = String.format(this.getString(R.string.dictionary__name__has_not_been_saved), dictionary.getName());
+                    }
 
                     exportingDictionary = null;
 
-                    //TODO: Save message
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 
                 } finally {
                     if (fos != null) fos.close();
@@ -267,11 +273,19 @@ public class MainActivity extends AppCompatActivity {
                     os = cr.openOutputStream(uri);
                     oos = new ObjectOutputStream(os);
 
-                    dict.save(oos);
+                    String message;
+
+                    if (dict.save(oos)) {
+                        message = String.format(this.getString(R.string.dictionary__name__has_been_saved), dictionary.getName());
+                    } else {
+                        message = String.format(getString(R.string.dictionary__name__has_not_been_saved), dictionary.getName());
+                    }
 
                     exportingDictionary = null;
 
-                    //TODO: Save message
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+
+                    exportingDictionary = null;
 
                 } finally {
                     if (os != null) os.close();
@@ -287,11 +301,9 @@ public class MainActivity extends AppCompatActivity {
             if (isNewTry) {
                 if (ContextCompat.checkSelfPermission(this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(LOG_TAG, "Old variant.");
+                    Log.d(LOG_TAG, "Old variant");
 
                     saveDictionaryOld(dict);
-
-                    //TODO: Save file at old version
 
                 } else {
                     Log.d(LOG_TAG, "Requesting permission...");
@@ -306,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        Log.d(LOG_TAG, "Saving ended.");
+        Log.d(LOG_TAG, "Saving ended");
     }
 
     @Override
@@ -317,11 +329,12 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 exportDictionary(exportingDictionary, false);
 
-                Log.d(LOG_TAG, "Write external permission received.");
+                Log.d(LOG_TAG, "Write external permission received");
             } else {
-                //TODO: Error message
 
-                Log.d(LOG_TAG, "Write external permission not received.");
+                Toast.makeText(this, this.getString(R.string.permission_not_received), Toast.LENGTH_SHORT).show();
+
+                Log.d(LOG_TAG, "Write external permission not received");
             }
         }
 
@@ -330,7 +343,8 @@ public class MainActivity extends AppCompatActivity {
     private void deleteDictionary(DictionaryData dictionary) {
         Log.d(LOG_TAG, String.format("Deleting dictionary %s...", dictionary));
 
-        ArrayList<WordData> words = (ArrayList<WordData>) wordRepository.getDictionaryWords(dictionary.getId());
+        ArrayList<WordData> words = new ArrayList<>();
+        words.addAll(wordRepository.getDictionaryWords(dictionary.getId()));
 
         for (WordData word : words) {
             Log.d(LOG_TAG, String.format("Deleting word %s...", word));
@@ -453,16 +467,15 @@ public class MainActivity extends AppCompatActivity {
                         if (dictionary != null) {
                             unpackDictionary(dictionary);
                         } else {
-                            Log.w(LOG_TAG, "File extension is invalid.");
-                            //TODO: Error message
+                            Toast.makeText(MainActivity.this, R.string.file_extension_is_invalid, Toast.LENGTH_SHORT).show();
+
+                            Log.w(LOG_TAG, "File extension is invalid");
                         }
 
-                        //TODO: Get dictionary
-
-                        Log.d(LOG_TAG, "Data received.");
+                        Log.d(LOG_TAG, "Data received");
 
                     } else {
-                        Log.d(LOG_TAG, "Data error.");
+                        Log.d(LOG_TAG, "Data error");
                     }
                 }
             });
@@ -547,8 +560,8 @@ public class MainActivity extends AppCompatActivity {
                         boolean isNewDictionary = data.getBooleanExtra(IS_NEW_DICTIONARY, false);
 
                         DictionaryData dictionary = (DictionaryData) data.getSerializableExtra(DICTIONARY);
-                        List<WordData> words = (ArrayList<WordData>) data.getSerializableExtra(WORDS);
-                        List<WordData> deletedWords = (ArrayList<WordData>) data.getSerializableExtra(DELETED_WORDS);
+                        ArrayList<WordData> words = (ArrayList<WordData>) data.getSerializableExtra(WORDS);
+                        ArrayList<WordData> deletedWords = (ArrayList<WordData>) data.getSerializableExtra(DELETED_WORDS);
 
                         if (isNewDictionary) {
                             Log.d(LOG_TAG, "Dictionary adding...");

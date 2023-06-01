@@ -1,5 +1,6 @@
 package ru.vladsa.wordteacher.dictionaries;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -71,5 +72,16 @@ public class DictionaryData implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(name, value, wordCount);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "DictionaryData{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", wordCount=" + wordCount +
+                ", value=" + value +
+                '}';
     }
 }

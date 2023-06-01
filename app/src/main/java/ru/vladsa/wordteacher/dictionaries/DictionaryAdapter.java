@@ -35,8 +35,9 @@ public class DictionaryAdapter extends RecyclerView.Adapter<DictionaryAdapter.Vi
         this.position = position;
     }
 
-    public DictionaryAdapter(Listener listener) {
+    public DictionaryAdapter(Listener listener, String word_count) {
         this.listener = listener;
+        DictionaryAdapter.word_count = word_count;
     }
 
     public interface Listener {
@@ -45,6 +46,8 @@ public class DictionaryAdapter extends RecyclerView.Adapter<DictionaryAdapter.Vi
 
         void onLongClicked(int position);
     }
+
+    private static String word_count;
 
     private final Listener listener;
 
@@ -112,7 +115,10 @@ public class DictionaryAdapter extends RecyclerView.Adapter<DictionaryAdapter.Vi
             if (!data.getName().isEmpty()) {
                 dictionaryBinding.name.setText(data.getName());
             }
-            dictionaryBinding.count.setText(String.valueOf(data.getWordCount()));
+
+            String wordCount = word_count + ": " + data.getWordCount();
+            dictionaryBinding.count.setText(wordCount);
+
             dictionaryBinding.value.setChecked(data.getValue());
         }
 

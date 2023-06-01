@@ -28,4 +28,9 @@
     <string name="wrong_word_move">Wrong word move</string>
     <string name="right_words_to_memorization">Right words to memorization</string>
     <string name="export">Export</string>
+    <string name="file_extension_is_invalid">File extension is invalid</string>
+    <string name="word_count">"Word count"</string>
+    <string name="dictionary__name__has_been_saved">Dictionary \"%s\" has been saved</string>
+    <string name="dictionary__name__has_not_been_saved">Dictionary \"%s\" has not been saved</string>
+    <string name="permission_not_received">Permission not received</string>
 </resources>

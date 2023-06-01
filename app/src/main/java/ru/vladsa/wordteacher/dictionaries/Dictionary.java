@@ -31,7 +31,7 @@ public class Dictionary implements Serializable {
         return words.size();
     }
 
-    public void save(ObjectOutputStream oos) {
+    public boolean save(ObjectOutputStream oos) {
         Log.d(LOG_TAG, String.format("Saving dictionary %s... to %s", this, oos));
 
         try {
@@ -40,13 +40,14 @@ public class Dictionary implements Serializable {
 
             Log.d(LOG_TAG, "Dictionary has saved.");
 
-            //TODO: Message
+            return true;
 
         } catch (IOException ex) {
             Log.e(LOG_TAG, "Dictionary has not saved.");
             ex.printStackTrace();
-        }
 
+            return false;
+        }
     }
 
     public static Dictionary load(ObjectInputStream ois) {

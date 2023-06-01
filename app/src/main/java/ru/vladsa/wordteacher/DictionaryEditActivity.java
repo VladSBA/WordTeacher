@@ -76,8 +76,6 @@ public class DictionaryEditActivity extends AppCompatActivity {
         public void onLongClicked(int position) {
             Log.d(LOG_TAG, "Setting position " + position);
             adapter.setPosition(position);
-
-            //TODO: Menu
         }
 
         @Override
