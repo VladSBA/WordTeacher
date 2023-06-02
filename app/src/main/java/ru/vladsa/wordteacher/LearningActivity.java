@@ -167,6 +167,8 @@ public class LearningActivity extends AppCompatActivity {
     private void displayWord(int position) {
         WordData displayedWord = wordList.get(position);
 
+        Log.d(LOG_TAG, String.format("Displaying word %s...", displayedWord));
+
         binding.word.setText(displayedWord.getWord());
         binding.meaning.setText(displayedWord.getMeaning());
         binding.image.setImageBitmap(getImage(displayedWord.getImage()));
@@ -190,6 +192,8 @@ public class LearningActivity extends AppCompatActivity {
     }
 
     private Bitmap getImage(String image) {
+        Log.d(LOG_TAG, "Getting image...");
+
         if (image != null && !image.isEmpty() && !image.equals("null") & !image.equals(GETTING_IMAGE)) {
             Bitmap bitmap;
 
