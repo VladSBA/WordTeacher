@@ -18,9 +18,11 @@ public class SettingsActivity extends AppCompatActivity {
     private SharedPreferences preferences;
 
     public static final String TIMER_KEY = "timer";
+    public static final String RESULT_KEY = "result";
     public static final String WRONG_WORD_MOVE_KEY = "WWM";
     public static final String RIGHT_WORDS_TO_MEMORIZED_KEY = "RWTM";
     private boolean timer;
+    private boolean result;
     private int wrongWordMove;
     private int rightWordsToMemorized;
 
@@ -33,15 +35,16 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.timerSwitch.setOnClickListener(v -> saveSettings());
-        binding.timerSwitch.setOnFocusChangeListener((v, hasFocus) -> saveSettings());
-        binding.timerSwitch.setOnFocusChangeListener((v, hasFocus) -> saveSettings());
+        binding.resultSwitch.setOnClickListener(v -> saveSettings());
 
         preferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         timer = preferences.getBoolean(TIMER_KEY, false);
+        result = preferences.getBoolean(RESULT_KEY, false);
         wrongWordMove = preferences.getInt(WRONG_WORD_MOVE_KEY, 1);
         rightWordsToMemorized = preferences.getInt(RIGHT_WORDS_TO_MEMORIZED_KEY, 2);
 
         binding.timerSwitch.setChecked(timer);
+        binding.resultSwitch.setChecked(result);
         binding.wordRightValue.setText(String.valueOf(rightWordsToMemorized));
         binding.wordMoveValue.setText(String.valueOf(wrongWordMove));
 
@@ -69,6 +72,7 @@ public class SettingsActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "Saving settings...");
 
         timer = binding.timerSwitch.isChecked();
+        result = binding.resultSwitch.isChecked();
 
         String wrong = binding.wordMoveValue.getText().toString();
         String right = binding.wordRightValue.getText().toString();
@@ -82,6 +86,7 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
 
         editor.putBoolean(TIMER_KEY, timer);
+        editor.putBoolean(RESULT_KEY, result);
         editor.putInt(WRONG_WORD_MOVE_KEY, wrongWordMove);
         editor.putInt(RIGHT_WORDS_TO_MEMORIZED_KEY, rightWordsToMemorized);
         editor.apply();
