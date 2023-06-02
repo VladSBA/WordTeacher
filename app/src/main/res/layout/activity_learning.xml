@@ -2,30 +2,41 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_learning_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp"
     tools:context=".LearningActivity">
 
-    <TextView
-        android:id="@+id/absolute_timer"
-        android:layout_width="0dp"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_container"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/absolute_time"
-        android:gravity="start"
+        app:cardCornerRadius="8dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/relative_timer"/>
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/very_light_gray"/>
+
+    </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/relative_timer"
+        android:id="@+id/timer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/relative_time"
-        android:gravity="end"
-        app:layout_constraintStart_toEndOf="@id/absolute_timer"
+        android:gravity="start"
+        android:text="@string/time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        tools:text="Time: 16" />
 
     <TextView
         android:id="@+id/word_annotation"
@@ -35,10 +46,10 @@
         android:gravity="center"
         android:text="@string/word_annotation"
         android:textAppearance="@style/TextAppearance.Compat.Notification"
+        app:layout_constraintBottom_toTopOf="@id/word"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/absolute_timer"
-        app:layout_constraintBottom_toTopOf="@id/word"/>
+        app:layout_constraintTop_toBottomOf="@id/timer" />
 
     <TextView
         android:id="@+id/word"
@@ -47,10 +58,10 @@
         android:layout_margin="4dp"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline2"
+        app:layout_constraintBottom_toTopOf="@id/image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/word_annotation"
-        app:layout_constraintBottom_toTopOf="@id/image"
         tools:text="@tools:sample/first_names" />
 
     <!--TODO Beautiful imageView-->
@@ -61,10 +72,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:contentDescription="@string/image"
+        app:layout_constraintBottom_toTopOf="@id/meaning_annotation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/word"
-        app:layout_constraintBottom_toTopOf="@id/meaning_annotation"
         tools:src="@tools:sample/avatars" />
 
     <TextView
@@ -72,13 +83,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:text="@string/meaning_annotation"
         android:gravity="center"
+        android:text="@string/meaning_annotation"
         android:textAppearance="@style/TextAppearance.Compat.Notification"
+        app:layout_constraintBottom_toTopOf="@id/meaning_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image"
-        app:layout_constraintBottom_toTopOf="@id/meaning_container"/>
+        app:layout_constraintTop_toBottomOf="@id/image" />
 
     <ScrollView
         android:id="@+id/meaning_container"
@@ -96,12 +107,10 @@
             android:layout_height="wrap_content"
             android:gravity="center|top"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
-            tools:text="@tools:sample/lorem/random"
-            tools:maxLines="10"/>
+            tools:maxLines="10"
+            tools:text="@tools:sample/lorem/random" />
 
     </ScrollView>
-
-
 
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -109,8 +118,8 @@
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:layout_margin="24dp"
-        android:text="@string/next"
         android:gravity="center"
+        android:text="@string/next"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -121,23 +130,23 @@
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:layout_margin="24dp"
-        android:text="@string/right"
         android:gravity="center"
+        android:text="@string/right"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/wrong"/>
+        app:layout_constraintEnd_toStartOf="@id/wrong"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/wrong"
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:layout_margin="24dp"
-        android:text="@string/wrong"
         android:gravity="center"
+        android:text="@string/wrong"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/right"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/right" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

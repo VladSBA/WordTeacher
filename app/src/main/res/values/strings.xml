@@ -22,8 +22,7 @@
     <string name="settings">Settings</string>
     <string name="import_dictionary">Import dictionary</string>
     <string name="learning">Learning</string>
-    <string name="absolute_time">Absolute time:</string>
-    <string name="relative_time">Relative time:</string>
+    <string name="time">Time</string>
     <string name="timer">Timer</string>
     <string name="wrong_word_move">Wrong word move</string>
     <string name="right_words_to_memorization">Right words to memorization</string>
@@ -33,4 +32,10 @@
     <string name="dictionary__name__has_been_saved">Dictionary \"%s\" has been saved</string>
     <string name="dictionary__name__has_not_been_saved">Dictionary \"%s\" has not been saved</string>
     <string name="permission_not_received">Permission not received</string>
+    <string name="time__int_">Time: %d</string>
+    <string name="words_learned__int_">Words learned: %d</string>
+    <string name="right_answers__int_">Right answers: %d</string>
+    <string name="wrong_answers__int_">Wrong answers: %d</string>
+    <string name="finish">Finish</string>
+    <string name="result_display">Result display</string>
 </resources>

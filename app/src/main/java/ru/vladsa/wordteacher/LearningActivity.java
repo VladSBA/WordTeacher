@@ -3,7 +3,9 @@ package ru.vladsa.wordteacher;
 import static ru.vladsa.wordteacher.DictionaryEditActivity.GETTING_IMAGE;
 import static ru.vladsa.wordteacher.MainActivity.WORDS;
 import static ru.vladsa.wordteacher.SettingsActivity.APP_PREFERENCES;
+import static ru.vladsa.wordteacher.SettingsActivity.RESULT_KEY;
 import static ru.vladsa.wordteacher.SettingsActivity.RIGHT_WORDS_TO_MEMORIZED_KEY;
+import static ru.vladsa.wordteacher.SettingsActivity.TIMER_KEY;
 import static ru.vladsa.wordteacher.SettingsActivity.WRONG_WORD_MOVE_KEY;
 
 import android.content.Context;
@@ -16,6 +18,8 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeSet;
 
 import ru.vladsa.wordteacher.databinding.ActivityLearningBinding;
@@ -36,12 +42,19 @@ public class LearningActivity extends AppCompatActivity {
     private HashMap<WordData, Integer> wordMap = new HashMap<>();
     private final TreeSet<Integer> tempID = new TreeSet<>();
 
+    private Timer timer;
+
     private int rightAnswers = 0;
     private int wrongAnswers = 0;
 
     private int activeWord = 0;
     private int maxRightWords;
     private int wrongWordShift;
+
+    private boolean timerEnabled;
+    private boolean resultEnabled;
+    private int time;
+    private String timerText;
 
     private ActivityLearningBinding binding;
 
@@ -54,20 +67,24 @@ public class LearningActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLearningBinding.inflate(getLayoutInflater());
 
+        binding.cardContainer.setVisibility(View.INVISIBLE);
+
         preferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
 
         maxRightWords = preferences.getInt(RIGHT_WORDS_TO_MEMORIZED_KEY, 2) - 1;
         wrongWordShift = preferences.getInt(WRONG_WORD_MOVE_KEY, 1);
+        timerEnabled = preferences.getBoolean(TIMER_KEY, false);
+        resultEnabled = preferences.getBoolean(RESULT_KEY, false);
 
         Intent intent = getIntent();
         wordList = getWordsFromExtra(intent);
         wordMap = getWordsFromList(wordList, 0);
 
         if (wordList.isEmpty()) {
-            Log.d(LOG_TAG, "Word list empty. Finishing activity...");
-            finish();
-            Log.d(LOG_TAG, "LearningActivity had finished");
+            endLearning();
         }
+
+        setTimer();
 
         displayWord(activeWord % wordList.size());
 
@@ -80,6 +97,71 @@ public class LearningActivity extends AppCompatActivity {
 
         Log.d(LOG_TAG, String.format("LearningActivity created. Max right words = %d, wrong word shift = %d", maxRightWords, wrongWordShift));
 
+    }
+
+    private void endLearning() {
+        Log.d(LOG_TAG, "Ending learning...");
+
+        if (resultEnabled) {
+            binding.right.setVisibility(View.INVISIBLE);
+            binding.wrong.setVisibility(View.INVISIBLE);
+
+            binding.cardContainer.setVisibility(View.VISIBLE);
+
+            timer.cancel();
+
+            //TODO: View results
+
+            FragmentManager fm = getSupportFragmentManager();
+            Fragment resultFragment = ResultFragment.newInstance(time, wordMap.size(), rightAnswers, wrongAnswers);
+
+            fm.beginTransaction()
+                    .replace(R.id.container, resultFragment)
+                    .commit();
+
+        } else {
+            finish();
+
+            Log.d(LOG_TAG, "LearningActivity finished.");
+        }
+
+
+        Log.d(LOG_TAG, "Learning ended.");
+    }
+
+    private void setTimer() {
+        time = 0;
+
+        timerText = this.getString(R.string.time) + ": ";
+
+        String timerTextNow = timerText + "0";
+        binding.timer.setText(timerTextNow);
+
+        if (timerEnabled) {
+            binding.timer.setVisibility(View.VISIBLE);
+        } else {
+            binding.timer.setVisibility(View.GONE);
+        }
+
+        timer = new Timer();
+        timer.schedule(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        time++;
+
+                        updateTimer();
+                    }
+                },
+                1000,
+                1000);
+
+    }
+
+    private void updateTimer() {
+        String timerTextNow = timerText + time;
+
+        binding.timer.setText(timerTextNow);
     }
 
     private void displayWord(int position) {
@@ -167,8 +249,8 @@ public class LearningActivity extends AppCompatActivity {
         activeWord++;
 
         if (wordList.size() == 0) {
-            Log.d(LOG_TAG, "Exit because wordList is null");
-            finish();
+            Log.d(LOG_TAG, "Exit because wordList is null...");
+            endLearning();
         } else {
             displayWord(activeWord % wordList.size());
         }
@@ -200,7 +282,7 @@ public class LearningActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "Getting words from extra...");
 
         LinkedList<WordData> words = new LinkedList<>();
-        words.addAll ((ArrayList<WordData>) data.getSerializableExtra(WORDS));
+        words.addAll((ArrayList<WordData>) data.getSerializableExtra(WORDS));
 
         return words;
     }

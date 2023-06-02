@@ -22,8 +22,6 @@
     <string name="settings">Настройки</string>
     <string name="import_dictionary">Импортировать словарь</string>
     <string name="learning">Обучение</string>
-    <string name="absolute_time">"Абсолютное время: "</string>
-    <string name="relative_time">"Относительное время: "</string>
     <string name="timer">Таймер</string>
     <string name="wrong_word_move">Сдвиг неправильного слова</string>
     <string name="right_words_to_memorization">Правильных слов для запоминания</string>
@@ -33,4 +31,11 @@
     <string name="dictionary__name__has_been_saved">Словарь \"%s\" сохранён</string>
     <string name="dictionary__name__has_not_been_saved">Словарь \"%s\" не сохранён</string>
     <string name="permission_not_received">Разрешение не получено</string>
+    <string name="time">Время</string>
+    <string name="time__int_">Время: %d</string>
+    <string name="words_learned__int_">Слов выучено: %d</string>
+    <string name="right_answers__int_">Правильных ответов: %d</string>
+    <string name="wrong_answers__int_">Неправильных ответов: %d</string>
+    <string name="finish">Закончить</string>
+    <string name="result_display">Отображение результатов</string>
 </resources>

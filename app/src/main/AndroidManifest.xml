@@ -12,8 +12,8 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.WordTeacher"
         tools:targetApi="31">
@@ -44,19 +44,26 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
 
+            <!--TODO: Open *.wtd files -->
+
 <!--
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+                <action android:name="android.intent.action.GET_CONTENT" />
+                <action android:name="android.intent.action.OPEN_DOCUMENT" />
+                <action android:name="android.intent.action.PICK" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="*" />
                 <data android:host="*" />
-                <data android:mimeType="application/wtd" />
+                <data android:mimeType="*/*" />
             </intent-filter>
 -->
+
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

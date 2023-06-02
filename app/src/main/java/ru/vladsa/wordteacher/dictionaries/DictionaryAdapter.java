@@ -45,6 +45,8 @@ public class DictionaryAdapter extends RecyclerView.Adapter<DictionaryAdapter.Vi
         void onPositionClicked(int position);
 
         void onLongClicked(int position);
+
+        void onCheckedChanged(int position, boolean isChecked);
     }
 
     private static String word_count;
@@ -151,6 +153,8 @@ public class DictionaryAdapter extends RecyclerView.Adapter<DictionaryAdapter.Vi
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             dictionaryUpdate();
+
+            listenerRef.get().onCheckedChanged(getAdapterPosition(), isChecked);
         }
 
         @Override

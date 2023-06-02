@@ -101,6 +101,20 @@ public class MainActivity extends AppCompatActivity {
             adapter.setPosition(position);
 
         }
+
+        @Override
+        public void onCheckedChanged(int position, boolean isChecked) {
+            DictionaryData dictionary = dictionaryRepository.getDictionaries().get(position);
+
+            Log.d(LOG_TAG, String.format("Changing dictionary %s value to %b", dictionary, isChecked));
+
+            dictionary.setValue(isChecked);
+
+            dictionaryRepository.updateDictionary(dictionary);
+
+            Log.d(LOG_TAG, "Dictionary has been updated");
+        }
+
     };
 
 
