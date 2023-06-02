@@ -1,7 +1,33 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
-    <style name="Base.Theme.WordTeacher" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.WordTeacher" parent="Theme.Material3.Dark">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/gray_20</item>
+
+        <item name="actionBarStyle">@style/Dark.ActionBar</item>
+
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/green_700</item>
+        <item name="colorPrimaryVariant">@color/green_500</item>
+        <item name="colorPrimaryDark">@color/green_185</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/blue_196</item>
+        <item name="colorSecondaryVariant">@color/blue_218</item>
+        <item name="colorOnSecondary">@color/blue_227</item>
+
+        <item name="android:colorBackground">@color/gray_20</item>
+
+        <item name="cardViewStyle">@style/Dark.CardViewStyle</item>
+
+        <item name="switchStyle">@style/Dark.SwitchStyle</item>
+
     </style>
+
+    <style name="Theme.WordTeacher" parent="Base.Theme.WordTeacher" />
+    <!--TODO: Customise theme-->
+
 </resources>

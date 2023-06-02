@@ -67,14 +67,14 @@ public class LearningActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLearningBinding.inflate(getLayoutInflater());
 
-        binding.cardContainer.setVisibility(View.INVISIBLE);
+        binding.container.setVisibility(View.INVISIBLE);
 
         preferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
 
         maxRightWords = preferences.getInt(RIGHT_WORDS_TO_MEMORIZED_KEY, 2) - 1;
         wrongWordShift = preferences.getInt(WRONG_WORD_MOVE_KEY, 1);
         timerEnabled = preferences.getBoolean(TIMER_KEY, false);
-        resultEnabled = preferences.getBoolean(RESULT_KEY, false);
+        resultEnabled = preferences.getBoolean(RESULT_KEY, true);
 
         Intent intent = getIntent();
         wordList = getWordsFromExtra(intent);
@@ -106,7 +106,7 @@ public class LearningActivity extends AppCompatActivity {
             binding.right.setVisibility(View.INVISIBLE);
             binding.wrong.setVisibility(View.INVISIBLE);
 
-            binding.cardContainer.setVisibility(View.VISIBLE);
+            binding.container.setVisibility(View.VISIBLE);
 
             timer.cancel();
 
@@ -233,6 +233,7 @@ public class LearningActivity extends AppCompatActivity {
         rightAnswers++;
 
         WordData word = wordList.get(activeWord % wordList.size());
+
         int value = wordMap.get(word);
 
         if (value >= maxRightWords) {

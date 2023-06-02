@@ -39,7 +39,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         preferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         timer = preferences.getBoolean(TIMER_KEY, false);
-        result = preferences.getBoolean(RESULT_KEY, false);
+        result = preferences.getBoolean(RESULT_KEY, true);
         wrongWordMove = preferences.getInt(WRONG_WORD_MOVE_KEY, 1);
         rightWordsToMemorized = preferences.getInt(RIGHT_WORDS_TO_MEMORIZED_KEY, 2);
 

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Light.ActionBar" parent="Widget.AppCompat.Light.ActionBar">
+        <item name="background">@color/white</item>
+    </style>
+
+    <style name="Dark.ActionBar" parent="Widget.AppCompat.Light.ActionBar">
+        <item name="background">@color/gray_20</item>
+    </style>
+
+    <style name="Base.CardViewStyle" parent="CardView" >
+        <item name="cardCornerRadius">16dp</item>
+    </style>
+
+    <style name="Light.CardViewStyle" parent="Base.CardViewStyle">
+        <item name="cardBackgroundColor">@color/very_light_blue</item>
+    </style>
+
+    <style name="Dark.CardViewStyle" parent="Base.CardViewStyle">
+        <item name="cardBackgroundColor">@color/very_dark_blue</item>
+    </style>
+    
+    <style name="Light.SwitchStyle" parent="Widget.Material3.CompoundButton.Switch">
+        <item name="trackTint">@color/light_blue</item>
+        <item name="thumbTint">@color/green_185</item>
+    </style>
+
+    <style name="Dark.SwitchStyle" parent="Widget.Material3.CompoundButton.Switch">
+        <item name="trackTint">@color/dark_blue</item>
+        <item name="thumbTint">@color/green_700</item>
+    </style>
+
+
+</resources>

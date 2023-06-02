@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="@id/timer_switch"
         app:layout_constraintBottom_toBottomOf="@id/timer_switch"/>
 
-    <Switch
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/timer_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,10 +41,11 @@
         app:layout_constraintTop_toTopOf="@id/result_switch"
         app:layout_constraintBottom_toBottomOf="@id/result_switch"/>
 
-    <Switch
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/result_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        tools:checked="true"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toEndOf="@id/result_text"
@@ -72,6 +73,7 @@
         app:layout_constraintTop_toBottomOf="@id/result_switch"
         app:layout_constraintStart_toEndOf="@id/word_move_text"
         app:layout_constraintEnd_toEndOf="parent"
+        android:hint="@string/wrong_word_move"
         android:gravity="center"
         android:inputType="number"
         android:autofillHints="phone"
@@ -99,6 +101,7 @@
         app:layout_constraintTop_toBottomOf="@id/word_move_value"
         app:layout_constraintStart_toEndOf="@id/word_right_text"
         app:layout_constraintEnd_toEndOf="parent"
+        android:hint="@string/right_words_to_memorization"
         android:gravity="center"
         android:inputType="number"
         android:autofillHints="phone"
