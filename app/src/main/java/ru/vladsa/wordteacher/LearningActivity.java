@@ -164,11 +164,11 @@ public class LearningActivity extends AppCompatActivity {
     private void endLearning() {
         Log.d(LOG_TAG, "Ending learning...");
 
-        if (resultEnabled) {
-            binding.right.hide();
-            binding.wrong.hide();
-            binding.next.hide();
+        binding.right.hide();
+        binding.wrong.hide();
+        binding.next.hide();
 
+        if (resultEnabled) {
             binding.resultContainer.setVisibility(View.VISIBLE);
 
             timer.cancel();
@@ -291,6 +291,7 @@ public class LearningActivity extends AppCompatActivity {
 
     private HashMap<WordData, Integer> getWordsFromList(List<WordData> wordData, int value) {
         HashMap<WordData, Integer> wordHashMap = new HashMap<>();
+
         for (WordData word : wordData) {
             wordHashMap.put(word, value);
         }
@@ -300,30 +301,38 @@ public class LearningActivity extends AppCompatActivity {
 
     private void right() {
         Log.d(LOG_TAG, "Right");
-        rightAnswers++;
-
-        WordData word = wordList.get(activeWord % wordList.size());
-
-        int value = wordMap.get(word);
-
-        if (value >= maxRightWords) {
-            Log.d(LOG_TAG, String.format("Remove %s at %d", word, activeWord));
-            int oldSize = wordList.size();
-            wordList.remove(activeWord % wordList.size());
-            int count = activeWord / oldSize;
-            activeWord = count * wordList.size() + activeWord % oldSize - 1;
-        } else {
-            value++;
-            wordMap.put(word, value);
-        }
-
-        activeWord++;
 
         if (wordList.size() == 0) {
-            Log.d(LOG_TAG, "Exit because wordList is null...");
+            Log.d(LOG_TAG, "WordList is empty. Ending learning...");
+
             endLearning();
         } else {
-            displayWord(activeWord % wordList.size());
+            rightAnswers++;
+
+            WordData word = wordList.get(activeWord % wordList.size());
+
+            int value = wordMap.get(word);
+
+            if (value >= maxRightWords) {
+                Log.d(LOG_TAG, String.format("Remove %s at %d", word, activeWord));
+                int oldSize = wordList.size();
+                wordList.remove(activeWord % wordList.size());
+                int count = activeWord / oldSize;
+                activeWord = count * wordList.size() + activeWord % oldSize - 1;
+            } else {
+                value++;
+                wordMap.put(word, value);
+            }
+
+            activeWord++;
+
+            if (wordList.size() == 0) {
+                Log.d(LOG_TAG, "Exit because wordList is null...");
+                endLearning();
+            } else {
+                displayWord(activeWord % wordList.size());
+            }
+
         }
 
     }
