@@ -23,6 +23,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.animation.LinearInterpolator;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -31,6 +33,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -63,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String MIME_TYPE_WTD = "application/wtd";
 
+    public static final int MIN_SCROLL_DISTANCE = 5;
+
     private DictionaryData exportingDictionary = null;
 
     private static final int PERMISSION_REQUEST_CODE = 67;
@@ -73,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
 
     private final String LAST_DICTIONARY_ID = "last_dictionary_id";
     private long lastDictionaryId;
+
+    private float previousX;
+    private float previousY;
 
     private ActivityMainBinding binding;
 
@@ -144,7 +152,82 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         lastDictionaryId = preferences.getLong(LAST_DICTIONARY_ID, 0);
 
+        /*binding.dictionaryRoot.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            //Hide on Scroll down
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY > oldScrollY) {
+                    hide();
+                }
+                if (scrollY < oldScrollY) {
+                    show();
+                }
+
+                //TODO: Beautifuler animation
+
+            }
+        });*/
+
+        binding.container.setOnTouchListener((v, event) -> onTouchEvent(event));
+        //TODO: Perform click
+
         Log.d(LOG_TAG, "MainActivity has been created");
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+
+        String LOG_TAG = MainActivity.LOG_TAG + "_TE";
+
+        float x = e.getX();
+        float y = e.getY();
+
+        float dy = y - previousY;
+
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                Log.i(LOG_TAG, String.format("Action down %s", e));
+
+            case MotionEvent.ACTION_MOVE:
+                Log.i(LOG_TAG, String.format("Action move %s", e));
+
+                if (dy > MIN_SCROLL_DISTANCE) {
+                    Log.d(LOG_TAG, "Showing...");
+                    show();
+                } else if (dy < -MIN_SCROLL_DISTANCE) {
+                    Log.d(LOG_TAG, "Hiding...");
+                    hide();
+                }
+
+            case MotionEvent.ACTION_UP:
+                Log.i(LOG_TAG, String.format("Action up %s", e));
+        }
+
+        previousX = x;
+        previousY = y;
+
+        return super.onTouchEvent(e);
+    }
+
+    private void hide() {
+        ConstraintLayout.LayoutParams rightLayoutParams =
+                (ConstraintLayout.LayoutParams) binding.addDictionary.getLayoutParams();
+        int rightBottomMargin = rightLayoutParams.bottomMargin;
+
+        binding.addDictionary.animate().translationY(binding.addDictionary.getHeight() + rightBottomMargin)
+                .setInterpolator(new LinearInterpolator()).start();
+
+        ConstraintLayout.LayoutParams wrongLayoutParams =
+                (ConstraintLayout.LayoutParams) binding.start.getLayoutParams();
+        int wrongBottomMargin = wrongLayoutParams.bottomMargin;
+
+        binding.start.animate().translationY(binding.start.getHeight() + wrongBottomMargin)
+                .setInterpolator(new LinearInterpolator()).start();
+    }
+
+    private void show() {
+        binding.addDictionary.animate().translationY(0).setInterpolator(new LinearInterpolator()).start();
+        binding.start.animate().translationY(0).setInterpolator(new LinearInterpolator()).start();
     }
 
     @Override
@@ -519,7 +602,6 @@ public class MainActivity extends AppCompatActivity {
 
             if (bitmap != null) {
                 Log.d(LOG_TAG, "Saving bitmap...");
-                int position = -1;
 
                 String fileName = String.format("%s_image_", bitmap.hashCode());
 

@@ -18,8 +18,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -82,6 +80,12 @@ public class DictionaryEditActivity extends AppCompatActivity {
         @Override
         public void onImageButtonClicked(int position) {
             getBitmap(position);
+        }
+
+        @Override
+        public void onCreatedContextMenu(int position) {
+            Log.d(LOG_TAG, "Context menu created. Setting position " + position);
+            adapter.setPosition(position);
         }
     };
     private final WordAdapter adapter = new WordAdapter(listener);
@@ -192,7 +196,7 @@ public class DictionaryEditActivity extends AppCompatActivity {
         words.addAll(adapter.getWords());
 
         WordData word = words.get(position);
-        Log.d(LOG_TAG, String.format("Deleting word %s...", word));
+        Log.d(LOG_TAG, String.format("Deleting word %s at position %d...", word, position));
 
         if (word.getImage() != null && !word.getImage().isEmpty() && !word.getImage().equals(GETTING_IMAGE)) {
             File file = new File(word.getImage());
@@ -292,26 +296,23 @@ public class DictionaryEditActivity extends AppCompatActivity {
 
     private final ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    Log.d(LOG_TAG, "Picking image...");
-                    Bitmap bitmap;
-                    if (result.getResultCode() == RESULT_OK) {
-                        Uri selectedImage = null;
-                        if (result.getData() != null) {
-                            selectedImage = result.getData().getData();
-                        }
-                        try {
-                            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
-
-                            saveBitmap(bitmap);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+            result -> {
+                Log.d(LOG_TAG, "Picking image...");
+                Bitmap bitmap;
+                if (result.getResultCode() == RESULT_OK) {
+                    Uri selectedImage = null;
+                    if (result.getData() != null) {
+                        selectedImage = result.getData().getData();
                     }
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
 
+                        saveBitmap(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+
             }
     );
 

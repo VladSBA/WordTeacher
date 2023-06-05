@@ -56,11 +56,13 @@ public class ResultFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            time = getArguments().getInt(ARG_TIME);
-            wordsLearned = getArguments().getInt(ARG_WORDS_LEARNED);
-            rightAnswers = getArguments().getInt(ARG_RIGHT_ANSWERS);
-            wrongAnswers = getArguments().getInt(ARG_WRONG_ANSWERS);
+        Bundle arguments = getArguments();
+
+        if (arguments != null) {
+            time = arguments.getInt(ARG_TIME);
+            wordsLearned = arguments.getInt(ARG_WORDS_LEARNED);
+            rightAnswers = arguments.getInt(ARG_RIGHT_ANSWERS);
+            wrongAnswers = arguments.getInt(ARG_WRONG_ANSWERS);
         }
 
         Log.d(LOG_TAG, "Fragment created.");

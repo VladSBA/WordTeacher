@@ -49,6 +49,8 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
         void onLongClicked(int position);
 
         void onImageButtonClicked(int position);
+
+        void onCreatedContextMenu(int position);
     }
 
     private final Listener listener;
@@ -234,6 +236,8 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> {
                 menu.add(Menu.NONE, ID_DELETE_IMAGE, Menu.NONE, R.string.delete_image);
                 menu.add(Menu.NONE, ID_DELETE, Menu.NONE, R.string.delete);
             }
+
+            listenerRef.get().onCreatedContextMenu(getAdapterPosition());
 
         }
     }

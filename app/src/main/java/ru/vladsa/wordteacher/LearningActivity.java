@@ -16,8 +16,10 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -38,11 +40,14 @@ public class LearningActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = MainActivity.LOG_TAG + " (LearningActivity)";
 
+    private static final int MIN_SCROLL_DISTANCE = 5;
+
     private LinkedList<WordData> wordList = new LinkedList<>();
     private HashMap<WordData, Integer> wordMap = new HashMap<>();
     private final TreeSet<Integer> tempID = new TreeSet<>();
 
     private Timer timer;
+    private boolean buttonsHidden = false;
 
     private int rightAnswers = 0;
     private int wrongAnswers = 0;
@@ -56,6 +61,9 @@ public class LearningActivity extends AppCompatActivity {
     private int time;
     private String timerText;
 
+    private boolean answerHasShowed = false;
+    private boolean scrollable;
+
     private ActivityLearningBinding binding;
 
     private SharedPreferences preferences;
@@ -67,7 +75,7 @@ public class LearningActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLearningBinding.inflate(getLayoutInflater());
 
-        binding.container.setVisibility(View.INVISIBLE);
+        binding.resultContainer.setVisibility(View.INVISIBLE);
 
         preferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
 
@@ -94,29 +102,82 @@ public class LearningActivity extends AppCompatActivity {
         binding.right.setOnClickListener(v -> right());
         binding.wrong.setOnClickListener(v -> wrong());
 
+        binding.mainContainer.setOnClickListener(v -> hideButtons());
+        binding.wordAnnotation.setOnClickListener(v -> hideButtons());
+        binding.word.setOnClickListener(v -> hideButtons());
+        binding.image.setOnClickListener(v -> hideButtons());
+        binding.meaningAnnotation.setOnClickListener(v -> hideButtons());
+        binding.meaning.setOnClickListener(v -> hideButtons());
+
+        binding.mainContainer.setOnScrollChangeListener(onScroll);
 
         Log.d(LOG_TAG, String.format("LearningActivity created. Max right words = %d, wrong word shift = %d", maxRightWords, wrongWordShift));
 
+    }
+
+    private final View.OnScrollChangeListener onScroll = (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+        if (answerHasShowed) {
+            if (scrollY - oldScrollY >= MIN_SCROLL_DISTANCE) {
+                Log.d(LOG_TAG + "_Scroll", "Scroll down");
+                hide();
+            } else if (oldScrollY - scrollY >= MIN_SCROLL_DISTANCE) {
+                Log.d(LOG_TAG + "_Scroll", "Scroll up");
+                show();
+            }
+        }
+
+    };
+
+    private void hideButtons() {
+            if (!scrollable && answerHasShowed) {
+                if (buttonsHidden) {
+                    show();
+                    buttonsHidden = false;
+                } else {
+                    hide();
+                    buttonsHidden = true;
+                }
+            }
+    }
+
+    private void hide() {
+        ConstraintLayout.LayoutParams rightLayoutParams =
+                (ConstraintLayout.LayoutParams) binding.right.getLayoutParams();
+        int rightBottomMargin = rightLayoutParams.bottomMargin;
+
+        binding.right.animate().translationY(binding.right.getHeight() + rightBottomMargin)
+                .setInterpolator(new LinearInterpolator()).start();
+
+        ConstraintLayout.LayoutParams wrongLayoutParams =
+                (ConstraintLayout.LayoutParams) binding.wrong.getLayoutParams();
+        int wrongBottomMargin = wrongLayoutParams.bottomMargin;
+
+        binding.wrong.animate().translationY(binding.wrong.getHeight() + wrongBottomMargin)
+                .setInterpolator(new LinearInterpolator()).start();
+    }
+
+    private void show() {
+        binding.right.animate().translationY(0).setInterpolator(new LinearInterpolator()).start();
+        binding.wrong.animate().translationY(0).setInterpolator(new LinearInterpolator()).start();
     }
 
     private void endLearning() {
         Log.d(LOG_TAG, "Ending learning...");
 
         if (resultEnabled) {
-            binding.right.setVisibility(View.INVISIBLE);
-            binding.wrong.setVisibility(View.INVISIBLE);
+            binding.right.hide();
+            binding.wrong.hide();
+            binding.next.hide();
 
-            binding.container.setVisibility(View.VISIBLE);
+            binding.resultContainer.setVisibility(View.VISIBLE);
 
             timer.cancel();
-
-            //TODO: View results
 
             FragmentManager fm = getSupportFragmentManager();
             Fragment resultFragment = ResultFragment.newInstance(time, wordMap.size(), rightAnswers, wrongAnswers);
 
             fm.beginTransaction()
-                    .replace(R.id.container, resultFragment)
+                    .replace(R.id.result_container, resultFragment)
                     .commit();
 
         } else {
@@ -169,15 +230,17 @@ public class LearningActivity extends AppCompatActivity {
 
         Log.d(LOG_TAG, String.format("Displaying word %s...", displayedWord));
 
+        answerHasShowed = false;
+
         binding.word.setText(displayedWord.getWord());
         binding.meaning.setText(displayedWord.getMeaning());
         binding.image.setImageBitmap(getImage(displayedWord.getImage()));
 
-        binding.image.setVisibility(View.GONE);
-        binding.meaningAnnotation.setVisibility(View.GONE);
-        binding.meaning.setVisibility(View.GONE);
-        binding.right.setVisibility(View.GONE);
-        binding.wrong.setVisibility(View.GONE);
+        binding.image.setVisibility(View.INVISIBLE);
+        binding.meaningAnnotation.setVisibility(View.INVISIBLE);
+        binding.meaning.setVisibility(View.INVISIBLE);
+        binding.right.setVisibility(View.INVISIBLE);
+        binding.wrong.setVisibility(View.INVISIBLE);
 
         binding.next.setVisibility(View.VISIBLE);
 
@@ -188,6 +251,23 @@ public class LearningActivity extends AppCompatActivity {
         }
 
         Log.d(LOG_TAG, String.format("Word %s at position %s has been displayed", displayedWord, position));
+
+    }
+
+    private void next() {
+        Log.d(LOG_TAG, "Next");
+
+        answerHasShowed = true;
+
+        binding.image.setVisibility(View.VISIBLE);
+        binding.meaningAnnotation.setVisibility(View.VISIBLE);
+        binding.meaning.setVisibility(View.VISIBLE);
+        binding.right.setVisibility(View.VISIBLE);
+        binding.wrong.setVisibility(View.VISIBLE);
+
+        binding.next.setVisibility(View.GONE);
+
+        scrollable = binding.meaning.getBottom() > binding.getRoot().getBottom();
 
     }
 
@@ -209,7 +289,6 @@ public class LearningActivity extends AppCompatActivity {
         return null;
     }
 
-
     private HashMap<WordData, Integer> getWordsFromList(List<WordData> wordData, int value) {
         HashMap<WordData, Integer> wordHashMap = new HashMap<>();
         for (WordData word : wordData) {
@@ -217,19 +296,6 @@ public class LearningActivity extends AppCompatActivity {
         }
 
         return wordHashMap;
-    }
-
-    private void next() {
-        Log.d(LOG_TAG, "Next");
-
-        binding.image.setVisibility(View.VISIBLE);
-        binding.meaningAnnotation.setVisibility(View.VISIBLE);
-        binding.meaning.setVisibility(View.VISIBLE);
-        binding.right.setVisibility(View.VISIBLE);
-        binding.wrong.setVisibility(View.VISIBLE);
-
-        binding.next.setVisibility(View.GONE);
-
     }
 
     private void right() {
@@ -281,7 +347,6 @@ public class LearningActivity extends AppCompatActivity {
         displayWord(activeWord % wordList.size());
 
     }
-
 
     private LinkedList<WordData> getWordsFromExtra(Intent data) {
         Log.d(LOG_TAG, "Getting words from extra...");
