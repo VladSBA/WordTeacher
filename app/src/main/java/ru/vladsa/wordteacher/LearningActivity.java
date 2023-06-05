@@ -15,9 +15,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -111,8 +113,23 @@ public class LearningActivity extends AppCompatActivity {
 
         binding.mainContainer.setOnScrollChangeListener(onScroll);
 
+        ActionBar actionBar = this.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         Log.d(LOG_TAG, String.format("LearningActivity created. Max right words = %d, wrong word shift = %d", maxRightWords, wrongWordShift));
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            super.onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private final View.OnScrollChangeListener onScroll = (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {

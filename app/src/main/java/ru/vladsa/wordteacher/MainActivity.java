@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
     private final String LAST_DICTIONARY_ID = "last_dictionary_id";
     private long lastDictionaryId;
 
-    private float previousX;
     private float previousY;
 
     private ActivityMainBinding binding;
@@ -152,22 +151,6 @@ public class MainActivity extends AppCompatActivity {
         preferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         lastDictionaryId = preferences.getLong(LAST_DICTIONARY_ID, 0);
 
-        /*binding.dictionaryRoot.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            //Hide on Scroll down
-            @Override
-            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (scrollY > oldScrollY) {
-                    hide();
-                }
-                if (scrollY < oldScrollY) {
-                    show();
-                }
-
-                //TODO: Beautifuler animation
-
-            }
-        });*/
-
         binding.container.setOnTouchListener((v, event) -> onTouchEvent(event));
         //TODO: Perform click
 
@@ -179,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
 
         String LOG_TAG = MainActivity.LOG_TAG + "_TE";
 
-        float x = e.getX();
         float y = e.getY();
 
         float dy = y - previousY;
@@ -203,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(LOG_TAG, String.format("Action up %s", e));
         }
 
-        previousX = x;
         previousY = y;
 
         return super.onTouchEvent(e);
