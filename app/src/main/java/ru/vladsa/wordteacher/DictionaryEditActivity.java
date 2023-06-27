@@ -129,6 +129,8 @@ public class DictionaryEditActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        //TODO: Hiding buttons
+
         Log.d(LOG_TAG, "DictionaryEditActivity has been created");
 
     }

@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String MIME_TYPE_WTD = "application/wtd";
 
+    public static final String LAST_DICTIONARY_ID = "last_dictionary_id";
+
     public static final int MIN_SCROLL_DISTANCE = 5;
 
     private DictionaryData exportingDictionary = null;
@@ -75,9 +77,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String LOG_TAG = "Log_WT_M";
 
     private SharedPreferences preferences;
-
-    private final String LAST_DICTIONARY_ID = "last_dictionary_id";
-    private long lastDictionaryId;
 
     private float previousY;
 
@@ -149,12 +148,62 @@ public class MainActivity extends AppCompatActivity {
         registerForContextMenu(binding.container);
 
         preferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        lastDictionaryId = preferences.getLong(LAST_DICTIONARY_ID, 0);
 
         binding.container.setOnTouchListener((v, event) -> onTouchEvent(event));
         //TODO: Perform click
 
+        Intent intent = getIntent();
+        Log.d(LOG_TAG, String.format("Intent type = %s", intent.getType()));
+        Uri uri;
+        switch (intent.getAction()) {
+            case Intent.ACTION_VIEW:
+                uri = intent.getData();
+                openNewDictionary(uri);
+                break;
+
+            case Intent.ACTION_SEND:
+                uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                openNewDictionary(uri);
+                break;
+        }
+
+
         Log.d(LOG_TAG, "MainActivity has been created");
+    }
+
+    private void openNewDictionary(Uri uri) {
+        if (uri == null) return;
+
+        Dictionary dictionary = null;
+
+        try {
+            InputStream is = null;
+            ObjectInputStream ois = null;
+
+            try {
+                is = getContentResolver().openInputStream(uri);
+                ois = new ObjectInputStream(is);
+
+                dictionary = Dictionary.load(ois);
+
+            } finally {
+                if (is != null) is.close();
+                if (ois != null) ois.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (dictionary != null) {
+            unpackDictionary(dictionary);
+        } else {
+            Toast.makeText(MainActivity.this, R.string.file_extension_is_invalid, Toast.LENGTH_SHORT).show();
+
+            Log.w(LOG_TAG, "File extension is invalid");
+        }
+
+        Log.d(LOG_TAG, "Data received");
+
     }
 
     @Override
@@ -234,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void importDictionary() {
         Intent dictionaryPickIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        dictionaryPickIntent.setType("*/*");
+        dictionaryPickIntent.setType("application/*");
 
         //TODO: cast type to MIME_TYPE_WTD
 
@@ -330,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
         //TODO: Save dictionary in other thread
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            Log.d(LOG_TAG, "New variant.");
+            Log.d(LOG_TAG, "New variant");
 
             String fileName = dictionary.getName() + ".wtd";
 
@@ -457,6 +506,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, DictionaryEditActivity.class);
         intent.putExtra(IS_NEW_DICTIONARY, true);
 
+        long lastDictionaryId = preferences.getLong(LAST_DICTIONARY_ID, 0);
+
         intent.putExtra(DICTIONARY_ID, lastDictionaryId + 1);
 
         intent.putExtra(WORDS, new ArrayList<WordData>());
@@ -547,27 +598,30 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(MainActivity.this, R.string.file_extension_is_invalid, Toast.LENGTH_SHORT).show();
 
-                            Log.w(LOG_TAG, "File extension is invalid");
+                            Log.w(LOG_TAG, "Cannot read this file.");
                         }
 
-                        Log.d(LOG_TAG, "Data received");
+                        Log.d(LOG_TAG, "Data received.");
 
                     } else {
-                        Log.d(LOG_TAG, "Data error");
+                        Log.d(LOG_TAG, "Data error.");
                     }
                 }
             });
 
     private void unpackDictionary(Dictionary dictionary) {
         DictionaryData dictionaryData = new DictionaryData(dictionary.getName(), dictionary.getWordCount(), false);
-        dictionaryRepository.addDictionary(dictionaryData);
+
+        //TODO: Fix unpack
 
         ArrayList<Word> words = (ArrayList<Word>) dictionary.getWords();
         ArrayList<WordData> wordsDataList = new ArrayList<>();
 
         Log.d(LOG_TAG, "Dictionary adding...");
 
-        lastDictionaryId = preferences.getLong(LAST_DICTIONARY_ID, 0);
+        dictionaryRepository.addDictionary(dictionaryData);
+
+        long lastDictionaryId = preferences.getLong(LAST_DICTIONARY_ID, 0);
         lastDictionaryId++;
 
         SharedPreferences.Editor editor = preferences.edit();
@@ -577,7 +631,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "Dictionary has added. LDI = " + lastDictionaryId);
 
         for (Word word : words) {
-            Bitmap bitmap = word.getImage();
+            Bitmap bitmap = word.getBitmap();
 
             WordData wordData = new WordData(word.getWord(), word.getMeaning(), null, lastDictionaryId);
 
@@ -592,7 +646,7 @@ public class MainActivity extends AppCompatActivity {
                         FileOutputStream fos = null;
 
                         File dir = getDir(IMAGE_DIR, MODE_PRIVATE);
-                        File file = new File(dir.getAbsoluteFile() + "/" + name);
+                        File file = new File(dir, name);
 
                         try {
                             fos = new FileOutputStream(file);
@@ -645,7 +699,7 @@ public class MainActivity extends AppCompatActivity {
 
                             dictionaryRepository.addDictionary(dictionary);
 
-                            lastDictionaryId = preferences.getLong(LAST_DICTIONARY_ID, 0);
+                            long lastDictionaryId = preferences.getLong(LAST_DICTIONARY_ID, 0);
                             lastDictionaryId++;
 
                             SharedPreferences.Editor editor = preferences.edit();
