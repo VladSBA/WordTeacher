@@ -14,13 +14,7 @@ import java.io.Serializable;
 public class Word implements Serializable {
     private String word;
     private String meaning;
-    private Bitmap image;
-
-    public Word(String word, String meaning, Bitmap image) {
-        this.word = word;
-        this.meaning = meaning;
-        this.image = image;
-    }
+    private Image image;
 
     public Word(WordData word) {
         this.word = word.getWord();
@@ -30,7 +24,7 @@ public class Word implements Serializable {
 
             try {
                 FileInputStream fis = new FileInputStream(word.getImage());
-                image = BitmapFactory.decodeStream(fis);
+                image = new Image(BitmapFactory.decodeStream(fis));
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -56,12 +50,11 @@ public class Word implements Serializable {
         this.meaning = meaning;
     }
 
-    public Bitmap getImage() {
-        return image;
-    }
+    public Bitmap getBitmap() {
+        if (image == null)
+            return null;
 
-    public void setImage(Bitmap image) {
-        this.image = image;
+        return image.getBitmap();
     }
 
     @NonNull
@@ -70,7 +63,7 @@ public class Word implements Serializable {
         return "Word{" +
                 "name='" + word + '\'' +
                 ", meaning='" + meaning + '\'' +
-                ", image " + image != null ? "exists" : "not exists" +
+                ", image " + (image != null ? "image" : "null") +
                 '}';
     }
 

@@ -26,7 +26,7 @@
     <string name="wrong_word_move">Сдвиг неправильного слова</string>
     <string name="right_words_to_memorization">Правильных слов для запоминания</string>
     <string name="export">Экспортировать</string>
-    <string name="file_extension_is_invalid">Расширение файла не подходит</string>
+    <string name="file_extension_is_invalid">Не удаётся открыть этот файл</string>
     <string name="word_count">Количество слов</string>
     <string name="dictionary__name__has_been_saved">Словарь \"%s\" сохранён</string>
     <string name="dictionary__name__has_not_been_saved">Словарь \"%s\" не сохранён</string>

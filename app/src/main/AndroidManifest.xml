@@ -20,21 +20,17 @@
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
-            android:label="@string/settings"
-            android:screenOrientation="portrait" />
+            android:label="@string/settings" />
         <activity
             android:name=".LearningActivity"
             android:exported="false"
-            android:label="@string/learning"
-            android:screenOrientation="portrait" />
+            android:label="@string/learning" />
         <activity
             android:name=".DictionaryEditActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
+            android:exported="true">
 
             <meta-data
                 android:name="android.app.searchable"
@@ -44,7 +40,23 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
 
-            <!--TODO: Open *.wtd files -->
+            <!--TODO: Open .wtd files -->
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:mimeType="application/*" />
+                <data android:host="*" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/*" />
+            </intent-filter>
 
 <!--
 
